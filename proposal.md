@@ -42,9 +42,7 @@
 
 ### Why it is important?
 
-* **For Protection key limitation:** In practice, programs may make a request for the isolation of many memory regions. If PMP is directly used, some PMP entries may be overwritten, which is inconsistent with the configuration of the user program and may cause security issues.
-
-
+* **For Protection key limitation:** In practice, programs may make a request for the isolation of many memory regions. If PMP is directly used, some PMP entries may be overwritten, which is inconsistent with the configuration of the user program and may cause security issues. 
 
 ## Related Work
 
@@ -53,6 +51,7 @@
 This work introduces the software abstraction of MPK, which is used to fix the three hidden issues.
 
 * **`libmpk`'s solution to Protection key limitation: **
+  * `libmpk` uses an application to virtualize the hardware protection key, it will call `mpk_mmap()` to create a new page group when a virtual key will be allocated to associate with the new group.  The virtual key maintains the group's permission and used to hide the physical key. A cache-like structure is used to map the virtual key to hardware key, and it will make sure that the frequently updated virtual key will be mapped with a hardware key and the other will be switched out. Hence, the limitation is hidden by the virtual key.
 
 <!--TODO: introduce solutions in libmpk-->
 
