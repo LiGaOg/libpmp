@@ -1,6 +1,6 @@
 # Computer-Security-Project-Proposal
 
-[//]: # (## Title and Author List)
+[//]: # "## Title and Author List"
 
 **Title:** `libpmp`
 
@@ -59,7 +59,12 @@ This work introduces the software abstraction of MPK, which is used to fix the t
 
 * The goal of `libpmp` is to support unlimited isolation of memory regions either using software virtualization.
 
-<!--TODO: similar solutions for PMP-->
+  * Limitation of number of PMP entry
+
+    The solution is similar to that of `libmpk`. We will maintain a cache-like structure called mapping table to store the mappings between virtual entry and PMP entry, where virtual entry acts as virtual key in `libmpk` whose number has no limit. If a virtual entry is already associated with `PMP` entry, then user can directly access a certain part of memory. When an expected virtual entry doesn't associate with any `PMP` entries and all of `PMP` entries are mapped, then there will be replacement in mapping table to evict some virtual entries based on algorithms like LRU. 
+
+<!--TODO: introduce solutions in libmpk-->
+
 
 ## Evaluation Plan
 
