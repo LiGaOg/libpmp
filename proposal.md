@@ -1,6 +1,6 @@
 # Computer-Security-Project-Proposal
 
-[//]: # "## Title and Author List"
+## Title and Author List
 
 **Title:** `libpmp`
 
