@@ -68,10 +68,28 @@ This work introduces the software abstraction of MPK, which is used to fix the t
 
 ## Evaluation Plan
 
-### 1. Functional Evaluation
-
 Our hypothesis when building `libmpk` was that `libmpk`, a software abstraction for PMP should implement the same function as the original PMP. Libmpk should limit untrusted code to access its own memory space.
 
-### 2. Performance Evaluation
+### 1. Security Evaluation
 
-### 3. Security Evaluation
+We evaluate the benefit of `libpmp` from the memory protection and isolation first. For some applications, `libpmp` provides domain-based isolation to prevent the malicious code from executing privileged instructions. The permission for the particular memory space set by `libpmp` is globally safe, which disabled the inner code to access other memory space. Moreover, exploiting the memory corruption bug to leak or ruin sensitive data stored in other memory spaces is killed by segmentation fault resulting the lack of permission, which protected the memory space from untrusted access.
+
+### 2. Microbenchmark
+
+Out evaluation to `libpmp` uses several microbenchmarks to show the performance of APIs provided by `libpmp`.
+
+**Cache performance**
+
+Cache performance is mainly decided by cache hit/eviction rate and number of pmp entries in use. We will run several microbenchmarks to check the cache performance.
+
+**Memory overhead**
+
+In this part, our team will focus on the memory space and its internal data structure to maintain the memory space protection.
+
+**Synchronization latency**
+
+Context switch and inter-thread interaction will cause latency in the API invoking. We will evaluate `libpmp`'s efficiency by comparing its performance with the original PMP implementation.
+
+### 3. Macrobenchmark
+
+We measure the performance overhead of `libpmp` in several actual application by evaluating their performance. 
