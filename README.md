@@ -11,7 +11,7 @@
 * Config RV64 environment (https://zhuanlan.zhihu.com/p/258394849?utm_id=0, can use `gdb` to inspect the value of `pmpxcfg` and `pmpaddrx`). **Ruihao Zhang, Yuezhen Xie, Shengqi Liu**
 * Read the source code of `libmpk`. **Jiaao Li**.
 * Inspect the benchmark of `libmpk`. **YeeTone Wang**.
-* Inspect PMP API. **Shengqi Liu**
+* Inspect PMP API and implementation. **Shengqi Liu**
 
 
 
