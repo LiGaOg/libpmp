@@ -19,7 +19,8 @@
 
 * Construct `libmpk` application benchmarks. **YeeTone Wang**.
 * Propose a baseline for `libpmp`. **Group Discussion**.
-* To be determined.
+* Implement PMP entry virtualization. **Yuezhen Xie, Ruihao Zhang**
+* Implement synchronization. **Jiaao Li**
 
 
 
