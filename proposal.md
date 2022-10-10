@@ -53,7 +53,7 @@ This work introduces the software abstraction of MPK, which is used to fix the t
 
 * **`libmpk`'s solution to Protection key limitation: **
   * `libmpk` uses an application to virtualize the hardware protection key, it will call `mpk_mmap()` to create a new page group when a virtual key will be allocated to associate with the new group.  The virtual key maintains the group's permission and used to hide the physical key. A cache-like structure is used to map the virtual key to hardware key, and it will make sure that the frequently updated virtual key will be mapped with a hardware key and the other will be switched out. Hence, the limitation is hidden by the virtual key.
-  * `libmpk` implements its own `mpk_protect`, which calls `do_pkey_sync()` to do the inter-thread synchronization. In `do_pkey_sync`, the calling thread will send interrupt to other threads within a process and register the callback functions to change the content of PMP entries. When other threads are scheduled, they will respond to the interrupt and execute the callback functions to synchronize the PMP entries.
+  * `libmpk` implements its own `mpk_protect`, which calls `do_pkey_sync()` to do the inter-thread synchronization. In `do_pkey_sync`, the calling thread will send interrupt to other threads within a process and register the callback functions to change the content of memory protection keys. When other threads are scheduled, they will respond to the interrupt and execute the callback functions to synchronize the memory protection keys.
 
 <!--TODO: introduce solutions in libmpk-->
 
