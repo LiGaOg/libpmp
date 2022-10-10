@@ -19,6 +19,7 @@
 
 * Construct `libmpk` application benchmarks. **YeeTone Wang**.
 * Propose a baseline for `libpmp`. **Group Discussion**.
+* To be determined.
 
 
 
