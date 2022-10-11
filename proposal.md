@@ -36,13 +36,14 @@
 * However, this is the overall solution for x86 architecture. We want to explore the memory protection mechanisms in other architecture.
 * In RISC-V, a similar design is called **Physical Memory Protection (PMP)**. PMP uses several PMP entries to control the privilege of memory access (PMP is composed of configuration and address registers, which are per-hardware-thread machine-mode control registers). After the exploration of PMP, we found that the second issue (Protection key limitation) exists in PMP.
 * **Protection key limitation exists in `pmp`: ** Unlike the Intel MPK, PMP uses 16 PMP entries instead of the protection key to manage the privilege of memory access for different memory regions. Since the number of PMP entries is limited, the isolation request for a specific memory region is also limited (for example, if 17 non-intersecting memory regions need isolating, from the settings of PMP, the content of one PMP entry will be overwritten). 
-* **Inter-thread synchronization may not exist in `pmp`: **From RISC-V Instruction Set Manual Volume II: Privileged Architecture (a manual), we find that `pmp` provides physical memory protection at a **hart** level, which is not at the same level as the operating system. The behavior of PMP entries is synchronized in the same hardware thread. However, for the software thread, there's no specification for the behavior of PMP entries in the RISC-V Instruction Set Manual. So all the software threads within a hart are using the same PMP entries to manage the memory access privilege.
+* **Inter-thread synchronization exist in `pmp`: **From RISC-V Instruction Set Manual Volume II: Privileged Architecture (a manual), we find that `pmp` provides physical memory protection at a **hart** level. If one thread runs on a core,  this thread has its own 16 PMP entries. If this thread is switched out from this hart, the content of PMP entries will be stored. However, suppose one thread A runs on core x, if A changes the value of some PMP entries, it will not be synchronized to other threads within the same process, which leads to the inter-thread synchronization problem.
 
 
 
 ### Why it is important?
 
 * **For Protection key limitation:** In practice, programs may make a request for the isolation of many memory regions. If PMP is directly used, some PMP entries may be overwritten, which is inconsistent with the configuration of the user program and may cause security issues. 
+* **For Inter-thread synchronization: **In Linux, programs uses the syscall `mprotect` to set the memory access privilege when allocating memory for one process. In RISC-V architecture, changing the memory access privilege can be implemented by setting specific values on PMP entries (consist of configuration registers and address registers). If the change in PMP entries cannot be synchronized with threads, it will cause confilct with the semantics of `mprotect` and may bring security vulnerabilities (for example, if thread A set one memory region to be not readable, however, thread B has the read privilege to the same memory region).
 
 ## Related Work
 
@@ -52,6 +53,7 @@ This work introduces the software abstraction of MPK, which is used to fix the t
 
 * **`libmpk`'s solution to Protection key limitation: **
   * `libmpk` uses an application to virtualize the hardware protection key, it will call `mpk_mmap()` to create a new page group when a virtual key will be allocated to associate with the new group.  The virtual key maintains the group's permission and used to hide the physical key. A cache-like structure is used to map the virtual key to hardware key, and it will make sure that the frequently updated virtual key will be mapped with a hardware key and the other will be switched out. Hence, the limitation is hidden by the virtual key.
+  * `libmpk` implements its own `mpk_protect`, which calls `do_pkey_sync()` to do the inter-thread synchronization. In `do_pkey_sync`, the calling thread will send interrupt to other threads within a process and register the callback functions to change the content of memory protection keys. When other threads are scheduled, they will respond to the interrupt and execute the callback functions to synchronize the memory protection keys.
 
 <!--TODO: introduce solutions in libmpk-->
 
@@ -62,6 +64,10 @@ This work introduces the software abstraction of MPK, which is used to fix the t
   * Limitation of number of PMP entry
 
     The solution is similar to that of `libmpk`. We will maintain a cache-like structure called mapping table to store the mappings between virtual entry and PMP entry, where virtual entry acts as virtual key in `libmpk` whose number has no limit. If a virtual entry is already associated with `PMP` entry, then user can directly access a certain part of memory. When an expected virtual entry doesn't associate with any `PMP` entries and all of `PMP` entries are mapped, then there will be replacement in mapping table to evict some virtual entries based on algorithms like LRU. 
+  
+  * Inter-thread synchronization
+  
+    The proposed solution is similar to that of `libmpk`. If one thread change the content of PMP entries, it will send interrupt and register callback functions to other threads within one process. When other threads are scheduled, they will change the content.
 
 <!--TODO: introduce solutions in libmpk-->
 
