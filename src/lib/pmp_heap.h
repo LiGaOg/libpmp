@@ -1,18 +1,23 @@
 #ifndef __PMP_HEAP_H__
 #define __PMP_HEAP_H__
 
+#define NULL (void *)0
+
 extern void* malloc(unsigned int size);
+extern void free(void *ptr);
 
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef unsigned long long uint64_t;
 
+typedef struct Node Node;
+
 struct Node{
     unsigned int start;
     unsigned int end;
     uint8_t privilege;
-    struct Node* next;
+    Node* next;
     int flag; // whether it is in PMP entry;
     int v_pmp_id; // 0-9999
 };
