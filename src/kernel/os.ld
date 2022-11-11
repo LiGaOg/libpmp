@@ -22,21 +22,22 @@ SECTIONS
 	} >ram
 	.data : {
 		. = ALIGN(4096);
-		*(.sdata .sdata.*);
-		*(.data .data.*);
+		PROVIDE(_data_start = .);
+		*(.sdata .sdata.*)
+		*(.data .data.*)
 		PROVIDE(_data_end = .);
 	} >ram
 
 	.bss :{
 		PROVIDE(_bss_start = .);
-		*(.sbss .sbss.*);
-		*(.bss .bss.*);
+		*(.sbss .sbss.*)
+		*(.bss .bss.*)
 		*(COMMON)
 		PROVIDE(_bss_end = .);
 	} >ram
 
-	PROVIDE(_memory_start = ORIGIN(ram))
-	PROVIDE(_memory_end = ORIGIN(ram) + LENGTH(ram))
+	PROVIDE(_memory_start = ORIGIN(ram));
+	PROVIDE(_memory_end = ORIGIN(ram) + LENGTH(ram));
 
 	PROVIDE(_heap_start = _bss_end);
 	PROVIDE(_heap_size = _memory_end - heap_start);
