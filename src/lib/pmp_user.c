@@ -43,7 +43,7 @@ unsigned char query_privilege(unsigned int addr){
             
             //case 1: cache is full
             if(cache_full()){
-                int evictIndex = 0;
+                int evictIndex = 0; 
                 cache[evictIndex] -> flag = 0;
                 cache[evictIndex] = highest_priority_fit;
                 // evict the original index from cache
