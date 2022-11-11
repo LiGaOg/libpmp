@@ -31,7 +31,7 @@ struct Node{
 extern Node* pmp_node_head;
 extern int pmp_cnt;
 
-extern Node* cache[16]; // middle layer
+extern Node* cache[8]; // middle layer
 
 int pmp_init();
 
