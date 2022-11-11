@@ -11,6 +11,16 @@ int pmp_init(){
     return 0;
 }
 
+void insert(Node* node){
+    Node* temp = pmp_node_head;
+
+    while(temp -> next != NULL){
+        temp = temp -> next;
+    }
+
+    temp -> next = node;
+}
+
 void pmp_free(int v_pmp_id){
     int in_PMP_entry = 0;
     Node *index = pmp_node_head;
