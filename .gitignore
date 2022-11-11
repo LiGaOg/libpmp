@@ -1,4 +1,5 @@
 .idea
-.bin
-.elf
+*.bin
+*.elf
+*.o
 .DS_Store
