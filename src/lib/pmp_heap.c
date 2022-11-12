@@ -35,21 +35,21 @@ void pmp_free(int v_pmp_id){
             index = index->next;
         }
     }
-    // if it's in cache[16], then need to remove and refresh to real pmp_entry
+    // if it's in cache[8], then need to remove and refresh to real pmp_entry
     if(in_PMP_entry == 1){
         int idx = -1;
-        for(int i = 0; i < 16; i++){
+        for(int i = 0; i < cache_len; i++){
             if(cache[i]->v_pmp_id == v_pmp_id){
                 idx = i;
                 break;
             }
         }
-        if(idx != 15){
-            for(int i = idx + 1; i < 16; i++){
+        if(idx != cache_len - 1){
+            for(int i = idx + 1; i < cache_len; i++){
                 cache[i - 1] = cache[i];
             }
         }
-        cache[15] = NULL;
+        cache[cache_len - 1] = NULL;
         refresh();
     }
     // finally, del the whole struct

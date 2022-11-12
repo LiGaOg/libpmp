@@ -2,6 +2,7 @@
 #define __PMP_HEAP_H__
 
 #define NULL (void *)0
+#define cache_len 8
 
 extern void* malloc(unsigned int size);
 extern void free(void *ptr);
@@ -25,13 +26,13 @@ struct Node{
 //MALLOC
 
 //lower layer: pmp entry
-//middle layer: 16 interval cache
+//middle layer: 8 interval cache
 //higher layer: 100 interval
 
 extern Node* pmp_node_head;
 extern int pmp_cnt;
 
-extern Node* cache[8]; // middle layer
+extern Node* cache[cache_len]; // middle layer
 
 int pmp_init();
 
