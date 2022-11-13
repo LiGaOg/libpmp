@@ -7,7 +7,10 @@ int pmp_init(){
     pmp_cnt = 0;                                        // set to 0, means that no pmp_entry yet
     pmp_node_head = (Node *)malloc(sizeof(Node));       // use head to control whole list
     pmp_node_head->next = NULL;
-    pmp_node_head->v_pmp_id = -1;                       // set head pmp_id to -1
+    pmp_node_head->v_pmp_id = -1; 
+    for(int i = 0 ; i< cache_len; i++){
+        cache[i] = NULL;
+    }                      // set head pmp_id to -1
     return 0;
 }
 

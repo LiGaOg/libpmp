@@ -1,7 +1,7 @@
 #include "pmp_user.h"
 
 int first_empty(){
-    for(int i = 0; i < 8; i++){
+    for(int i = 0; i < cache_len; i++){
         if(cache[i] == NULL){
             return i;
         }
@@ -70,12 +70,13 @@ void pmp_mmap(unsigned int start, unsigned int end, unsigned char privilege, int
     request->end = end;
     request->privilege = privilege;
     request->v_pmp_id = v_pmp_id;
+    request->flag = 0;
     // TODO : whether or not need to judget the List is created
     insert(request);
 }
 
 void logNode(Node* node){
-    printf("[Node] start = %d, end = %d, privilege = %x, flag = %d, v_pmp_id = %d"
+    printf("[Node] start = %x, end = %x, privilege = %x, flag = %d, v_pmp_id = %d"
         , node -> start, node -> end, node -> privilege, node -> flag, node -> v_pmp_id);
 }
 
@@ -92,9 +93,9 @@ void log(){
     printf("[Mid level]\n");
     for(int i =0; i < 8; i++){
         if(cache[i] == NULL){
-            printf("cache[%d]: NULL\n");
+            printf("cache[%d]: NULL\n", i);
         }else{
-            printf("cache[%d]: ");
+            printf("cache[%d]: ", i);
             logNode(cache[i]);
             printf("\n");
         }
