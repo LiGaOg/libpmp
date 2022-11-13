@@ -1,5 +1,7 @@
 #include "pmp_heap.h"
 
+Node* cache[cache_len]; // middle layer
+			       //
 Node* pmp_node_head;
 int pmp_cnt;
 
