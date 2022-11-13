@@ -2,7 +2,7 @@
 #include "pmp_user.h"
 
 int first_empty(){
-    for(int i = 0; i < 16; i++){
+    for(int i = 0; i < 8; i++){
         if(cache[i] == NULL){
             return i;
         }
@@ -20,10 +20,10 @@ unsigned char query_privilege(unsigned int addr){
     
     Node* temp = pmp_node_head;
     while(temp != NULL){
-        if(temp -> start >= addr && temp -> end <= addr){
+        if(temp -> start >= addr && temp -> end < addr){
             // address fit
             if(highest_priority_fit == NULL
-                || highest_priority_fit->v_pmp_id <= temp->v_pmp_id){
+                || highest_priority_fit->v_pmp_id >= temp->v_pmp_id){
                     highest_priority_fit = temp;
                 }
         }
@@ -34,6 +34,8 @@ unsigned char query_privilege(unsigned int addr){
         // not fit pmp virtual entry, just return the default privilege
         // What's the default privilege??
         // According to the book of riscv, the default privilege is all-0, just reject in s and u.
+        // This will trigger exception/interrupt.
+        
         return default_privilege;
     }else{
         if(highest_priority_fit -> flag){
@@ -55,6 +57,7 @@ unsigned char query_privilege(unsigned int addr){
 
             highest_priority_fit -> flag = 1;
             // let the selected one with highest priority into the cache
+            refresh();
 
             return highest_priority_fit->privilege;
 
