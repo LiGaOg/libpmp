@@ -1,11 +1,11 @@
 #ifndef __PMP_HEAP_H__
 #define __PMP_HEAP_H__
 
-#define NULL (void *)0
+#include <stdlib.h>
+#include <stdio.h>
+
 #define cache_len 8
 
-extern void* malloc(unsigned int size);
-extern void free(void *ptr);
 
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
