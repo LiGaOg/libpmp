@@ -73,3 +73,31 @@ void pmp_mmap(unsigned int start, unsigned int end, unsigned char privilege, int
     // TODO : whether or not need to judget the List is created
     insert(request);
 }
+
+void logNode(Node* node){
+    printf("[Node] start = %d, end = %d, privilege = %x, flag = %d, v_pmp_id = %d"
+        , node -> start, node -> end, node -> privilege, node -> flag, node -> v_pmp_id);
+}
+
+void log(){
+    printf("[High level] pmp_cnt = %d\n", pmp_cnt);
+    
+    Node* node = pmp_node_head;
+    while(node != NULL){
+        logNode(node);
+        node = node -> next;
+        printf("\n");
+    }
+    
+    printf("[Mid level]\n");
+    for(int i =0; i < 8; i++){
+        if(cache[i] == NULL){
+            printf("cache[%d]: NULL\n");
+        }else{
+            printf("cache[%d]: ");
+            logNode(cache[i]);
+            printf("\n");
+        }
+    }
+    
+}
