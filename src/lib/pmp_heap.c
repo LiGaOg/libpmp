@@ -1,5 +1,7 @@
 #include "pmp_heap.h"
 
+Node* cache[cache_len]; // middle layer
+			       //
 Node* pmp_node_head;
 int pmp_cnt;
 
@@ -140,4 +142,13 @@ void refresh(){
         /*         "r"(pmpaddr[15])    // %19 */
         /*         : */
     /* ); */
+    for(int i = 0; i < 16; i++){
+	    printf("pmpaddr%d, %x\n", i, pmpaddr[i]);
+    }
+    unsigned int mask = 0x000000ff;
+    for(int i = 0; i < 4; i++){
+	for (int j = 0; j < 4; j++) {
+		printf("pmp%dcfg, %x\n", i * 4 + j, (pmpcfg[i] >> 8 * j) & mask);
+	}
+    }
 }

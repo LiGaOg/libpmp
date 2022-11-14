@@ -19,7 +19,7 @@ unsigned char query_privilege(unsigned int addr){
     
     Node* temp = pmp_node_head;
     while(temp != NULL){
-        if(temp -> start >= addr && temp -> end < addr){
+        if(temp -> start <= addr && temp -> end > addr){
             // address fit
             if(highest_priority_fit == NULL
                 || highest_priority_fit->v_pmp_id >= temp->v_pmp_id){
