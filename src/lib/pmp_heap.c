@@ -22,6 +22,7 @@ void insert(Node* node){
     }
 
     temp -> next = node;
+    pmp_cnt += 1;
 }
 
 void pmp_free(int v_pmp_id){

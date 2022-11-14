@@ -71,6 +71,7 @@ void pmp_mmap(unsigned int start, unsigned int end, unsigned char privilege, int
     request->privilege = privilege;
     request->v_pmp_id = v_pmp_id;
     request->flag = 0;
+
     // TODO : whether or not need to judget the List is created
     insert(request);
 }
