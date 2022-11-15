@@ -4,6 +4,7 @@ Node* cache[cache_len]; // middle layer
 			       //
 Node* pmp_node_head;
 int pmp_cnt;
+long long system_time;
 
 int pmp_init(){
     pmp_cnt = 0;                                        // set to 0, means that no pmp_entry yet
@@ -13,6 +14,7 @@ int pmp_init(){
     for(int i = 0 ; i< cache_len; i++){
         cache[i] = NULL;
     }                      // set head pmp_id to -1
+    system_time = 0;
     return 0;
 }
 

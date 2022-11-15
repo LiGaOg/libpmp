@@ -21,6 +21,7 @@ struct Node{
     Node* next;
     int flag; // whether it is in PMP entry;
     int v_pmp_id; // 0-9999
+    long long lru_time;
 };
 
 //MALLOC
@@ -33,6 +34,7 @@ extern Node* pmp_node_head;
 extern int pmp_cnt;
 
 extern Node* cache[cache_len]; // middle layer
+extern long long system_time;
 
 int pmp_init();
 

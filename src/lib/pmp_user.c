@@ -13,7 +13,20 @@ int cache_full(){
     return first_empty() == -1;
 }
 
+
+int lru_evict_index(){
+    int index = 0;
+    for(int i = 0; i < cache_len; i++){
+        if(cache[i] -> lru_time <= cache[index] -> lru_time){
+            index = i;
+        }
+    }
+
+    return index;
+}
+
 unsigned char query_privilege(unsigned int addr){
+    system_time++;
     Node* highest_priority_fit = NULL;
     unsigned char default_privilege = 0;
     
@@ -37,14 +50,15 @@ unsigned char query_privilege(unsigned int addr){
         
         return default_privilege;
     }else{
+        highest_priority_fit-> lru_time = system_time;
         if(highest_priority_fit -> flag){
             // it is in pmp entry, no updating
             return highest_priority_fit -> privilege;
         }else {
-            
             //case 1: cache is full
             if(cache_full()){
-                int evictIndex = 0; 
+                // use LRU algorithm to evict one entry
+                int evictIndex = lru_evict_index(); 
                 cache[evictIndex] -> flag = 0;
                 cache[evictIndex] = highest_priority_fit;
                 // evict the original index from cache
@@ -71,6 +85,7 @@ void pmp_mmap(unsigned int start, unsigned int end, unsigned char privilege, int
     request->privilege = privilege;
     request->v_pmp_id = v_pmp_id;
     request->flag = 0;
+    request->lru_time = 0;
 
     // TODO : whether or not need to judget the List is created
     insert(request);
