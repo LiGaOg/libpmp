@@ -1,5 +1,6 @@
 
 #include "os.h"
+#include <stdint.h>
 
 /*
  * Following global vars are defined in mem.S
@@ -172,6 +173,16 @@ void page_free(void *p)
 			page++;;
 		}
 	}
+}
+
+void *malloc(uint32_t size)
+{
+	return page_alloc(1);
+}
+
+void free(void *ptr)
+{
+	page_free(ptr);
 }
 
 void page_test()
