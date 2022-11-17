@@ -40,7 +40,7 @@ SECTIONS
 	PROVIDE(_memory_end = ORIGIN(ram) + LENGTH(ram));
 
 	PROVIDE(_heap_start = _bss_end);
-	PROVIDE(_heap_size = _memory_end - heap_start);
+	PROVIDE(_heap_size = _memory_end - _heap_start);
 
 
 }
