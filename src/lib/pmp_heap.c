@@ -100,50 +100,50 @@ void refresh(){
         }
     }
     // assembly
-        /* asm volatile( */
-        /*         "mv pmpcfg0, %0;\ */
-        /*         mv pmpcfg1, %1;\ */
-        /*         mv pmpcfg2, %2;\ */
-        /*         mv pmpcfg3, %3;\ */
-        /*         mv pmpaddr0, %4;\ */
-        /*         mv pmpaddr1, %5;\ */
-        /*         mv pmpaddr2, %6;\ */
-        /*         mv pmpaddr3, %7;\ */
-        /*         mv pmpaddr4, %8;\ */
-        /*         mv pmpaddr5, %9;\ */
-        /*         mv pmpaddr6, %10;\ */
-        /*         mv pmpaddr7, %11;\ */
-        /*         mv pmpaddr8, %12;\ */
-        /*         mv pmpaddr9, %13;\ */
-        /*         mv pmpaddr10, %14;\ */
-        /*         mv pmpaddr11, %15;\ */
-        /*         mv pmpaddr12, %16;\ */
-        /*         mv pmpaddr13, %17;\ */
-        /*         mv pmpaddr14, %18;\ */
-        /*         mv pmpaddr15, %19;" */
-        /*         : */
-        /*         :"r"(pmpcfg[0]),    // %0 */
-        /*         "r"(pmpcfg[1]),     // %1 */
-        /*         "r"(pmpcfg[2]),     // %2 */
-        /*         "r"(pmpcfg[3]),     // %3 */
-        /*         "r"(pmpaddr[0]),    // %4 */
-        /*         "r"(pmpaddr[1]),    // %5 */
-        /*         "r"(pmpaddr[2]),    // %6 */
-        /*         "r"(pmpaddr[3]),    // %7 */
-        /*         "r"(pmpaddr[4]),    // %8 */
-        /*         "r"(pmpaddr[5]),    // %9 */
-        /*         "r"(pmpaddr[6]),    // %10 */
-        /*         "r"(pmpaddr[7]),    // %11 */
-        /*         "r"(pmpaddr[8]),    // %12 */
-        /*         "r"(pmpaddr[9]),    // %13 */
-        /*         "r"(pmpaddr[10]),   // %14 */
-        /*         "r"(pmpaddr[11]),   // %15 */
-        /*         "r"(pmpaddr[12]),   // %16 */
-        /*         "r"(pmpaddr[13]),   // %17 */
-        /*         "r"(pmpaddr[14]),   // %18 */
-        /*         "r"(pmpaddr[15])    // %19 */
-        /*         : */
-    /* ); */
+        asm volatile(
+                "mv pmpcfg0, %0;\
+                mv pmpcfg1, %1;\
+                mv pmpcfg2, %2;\
+                mv pmpcfg3, %3;\
+                mv pmpaddr0, %4;\
+                mv pmpaddr1, %5;\
+                mv pmpaddr2, %6;\
+                mv pmpaddr3, %7;\
+                mv pmpaddr4, %8;\
+                mv pmpaddr5, %9;\
+                mv pmpaddr6, %10;\
+                mv pmpaddr7, %11;\
+                mv pmpaddr8, %12;\
+                mv pmpaddr9, %13;\
+                mv pmpaddr10, %14;\
+                mv pmpaddr11, %15;\
+                mv pmpaddr12, %16;\
+                mv pmpaddr13, %17;\
+                mv pmpaddr14, %18;\
+                mv pmpaddr15, %19;"
+                :
+                :"r"(pmpcfg[0]),    // %0
+                "r"(pmpcfg[1]),     // %1
+                "r"(pmpcfg[2]),     // %2
+                "r"(pmpcfg[3]),     // %3
+                "r"(pmpaddr[0]),    // %4
+                "r"(pmpaddr[1]),    // %5
+                "r"(pmpaddr[2]),    // %6
+                "r"(pmpaddr[3]),    // %7
+                "r"(pmpaddr[4]),    // %8
+                "r"(pmpaddr[5]),    // %9
+                "r"(pmpaddr[6]),    // %10
+                "r"(pmpaddr[7]),    // %11
+                "r"(pmpaddr[8]),    // %12
+                "r"(pmpaddr[9]),    // %13
+                "r"(pmpaddr[10]),   // %14
+                "r"(pmpaddr[11]),   // %15
+                "r"(pmpaddr[12]),   // %16
+                "r"(pmpaddr[13]),   // %17
+                "r"(pmpaddr[14]),   // %18
+                "r"(pmpaddr[15])    // %19
+                :
+    );
     for(int i = 0; i < 16; i++){
 	    printf("pmpaddr%d, %x\n", i, pmpaddr[i]);
     }
