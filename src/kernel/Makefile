@@ -28,7 +28,7 @@ all: os.elf
 
 # start.o must be the first in dependency!
 os.elf: ${OBJS}
-	${CC} ${CFLAGS} -T os.ld -o os.elf $^
+	${CC} -static ${CFLAGS} -T os.ld -o os.elf $^ ../lib/libpmp.a
 	${OBJCOPY} -O binary os.elf os.bin
 
 %.o : %.c
