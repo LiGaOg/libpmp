@@ -87,8 +87,10 @@ void refresh(){
     uint32_t pmpcfg[4];
     for(int i = cache_len - 1; i >= 0; i--){
         if(cache[i] != NULL){
-            pmpcfg[i / 2] = pmpcfg[i / 2] << 8;
+            pmpcfg[i / 2] = pmpcfg[i / 2] << 5;
             pmpcfg[i / 2] = pmpcfg[i / 2] | 1;
+            pmpcfg[i / 2] = pmpcfg[i / 2] << 3;
+            pmpcfg[i / 2] = pmpcfg[i / 2] | cache[i]->privilege;
             pmpcfg[i / 2] = pmpcfg[i / 2] << 8;
             pmpaddr[i * 2] = cache[i]->start;
             pmpaddr[i * 2 + 1] = cache[i]->end;
@@ -149,8 +151,8 @@ void refresh(){
     }
     unsigned int mask = 0x000000ff;
     for(int i = 0; i < 4; i++){
-	for (int j = 0; j < 4; j++) {
-		printf("pmp%dcfg, %x\n", i * 4 + j, (pmpcfg[i] >> 8 * j) & mask);
-	}
+    	for (int j = 0; j < 4; j++) {
+	    	printf("pmp%dcfg, %x\n", i * 4 + j, (pmpcfg[i] >> 8 * j) & mask);
+    	}
     }
 }
