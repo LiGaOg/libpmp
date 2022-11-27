@@ -101,26 +101,26 @@ void refresh(){
     }
     // assembly
         asm volatile(
-                "mv pmpcfg0, %0;\
-                mv pmpcfg1, %1;\
-                mv pmpcfg2, %2;\
-                mv pmpcfg3, %3;\
-                mv pmpaddr0, %4;\
-                mv pmpaddr1, %5;\
-                mv pmpaddr2, %6;\
-                mv pmpaddr3, %7;\
-                mv pmpaddr4, %8;\
-                mv pmpaddr5, %9;\
-                mv pmpaddr6, %10;\
-                mv pmpaddr7, %11;\
-                mv pmpaddr8, %12;\
-                mv pmpaddr9, %13;\
-                mv pmpaddr10, %14;\
-                mv pmpaddr11, %15;\
-                mv pmpaddr12, %16;\
-                mv pmpaddr13, %17;\
-                mv pmpaddr14, %18;\
-                mv pmpaddr15, %19;"
+                "csrw pmpcfg0, %0;\
+                csrw pmpcfg1, %1;\
+                csrw pmpcfg2, %2;\
+                csrw pmpcfg3, %3;\
+                csrw pmpaddr0, %4;\
+                csrw pmpaddr1, %5;\
+                csrw pmpaddr2, %6;\
+                csrw pmpaddr3, %7;\
+                csrw pmpaddr4, %8;\
+                csrw pmpaddr5, %9;\
+                csrw pmpaddr6, %10;\
+                csrw pmpaddr7, %11;\
+                csrw pmpaddr8, %12;\
+                csrw pmpaddr9, %13;\
+                csrw pmpaddr10, %14;\
+                csrw pmpaddr11, %15;\
+                csrw pmpaddr12, %16;\
+                csrw pmpaddr13, %17;\
+                csrw pmpaddr14, %18;\
+                csrw pmpaddr15, %19;"
                 :
                 :"r"(pmpcfg[0]),    // %0
                 "r"(pmpcfg[1]),     // %1
