@@ -1,4 +1,4 @@
-export riscv64_toolchains_path=/home/bill/prog/UG/CS315/project/riscv/bin/
+export riscv64_toolchains_path=/opt/riscv/bin/
 cd lib
 make
 cd ../kernel
