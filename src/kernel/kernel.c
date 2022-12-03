@@ -39,7 +39,7 @@ void start_kernel_hart1(void) {
 void start_kernel_hart2(void) {
 
   uart_init();
-  uart_puts("Hello, libpmp kernel, hart 1!\n");
+  uart_puts("Hello, libpmp kernel, hart 2!\n");
   page_init();
 
   pmp_init();
