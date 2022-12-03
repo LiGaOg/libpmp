@@ -21,11 +21,11 @@ _start:
 					# to the end of the first stack space
 	add	sp, sp, t0		# move the current hart stack pointer
 					# to its place in the stack space
-	bnez t1, start_kernel   # if it's on hart 0
+	beqz t1, start_kernel   # if it's on hart 0
 	addi t1, t1, -1
-	bnez t1, start_kernel_hart1
+	beqz t1, start_kernel_hart1
 	addi t1, t1, -1
-	bnez t1, start_kernel_hart2
+	beqz t1, start_kernel_hart2
 	j	park		# rest of hart all park
 
 park:
