@@ -24,6 +24,8 @@ _start:
 	bnez t1, start_kernel   # if it's on hart 0
 	addi t1, t1, -1
 	bnez t1, start_kernel_hart1
+    addi t1, t1, -1
+    bnez t1, start_kernel_hart2
 	j	park		# rest of hart all park
 
 park:

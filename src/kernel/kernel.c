@@ -35,3 +35,18 @@ void start_kernel_hart1(void) {
   while (1) {
   }; // stop here!
 }
+
+void start_kernel_hart2(void) {
+
+  uart_init();
+  uart_puts("Hello, libpmp kernel, hart 1!\n");
+  page_init();
+
+  pmp_init();
+  pmp_mmap(0x87E00000, 0x87F00000, 0x6, 0);
+
+  unsigned char privilege = query_privilege(0x87E00002);
+
+  while (1) {
+  }; // stop here!
+}
