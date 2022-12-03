@@ -1,4 +1,4 @@
-CC = riscv64-unknown-elf-gcc
+CC = ${riscv64_toolchains_path}riscv64-unknown-elf-gcc
 CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -Wall
 SRCS_C = \
 	 pmp_heap.c \

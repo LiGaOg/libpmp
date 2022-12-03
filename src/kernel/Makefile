@@ -1,4 +1,4 @@
-CROSS_COMPILE = riscv64-unknown-elf-
+CROSS_COMPILE = ${riscv64_toolchains_path}/riscv64-unknown-elf-
 CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -Wall
 
 QEMU = qemu-system-riscv32
