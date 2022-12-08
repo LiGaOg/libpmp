@@ -59,7 +59,10 @@ middle_layer * middle;
 /* This function add one virtual pmp entries into the middle layer
  * If the middle layer is full, it will evict one virtual pmp entry 
  * in the layer and put it to the linkedlist */
-void add_virtual_pmp_entry_to_cache(virtual_pmp_entry * target);
+void add_virtual_pmp_entry_to_cache(virtual_pmp_entry *target);
+
+/* This function is used to delete virtual pmp entry in middle layer */
+void delete_middle_layer_entry(virtual_pmp_entry *target);
 
 /* Refresh middle layer to physical PMP entries */
 void refresh();
