@@ -1,5 +1,4 @@
 #include "pmp_util.c"
-#include "pmp_types.h"
 #include "pmp_system_library.h"
 
 void pmp_exception_handler(uint32_t addr) {

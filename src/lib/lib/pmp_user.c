@@ -1,6 +1,5 @@
-#include "pmp_types.h"
 #include "pmp_system_library.h"
-
+#include "pmp_util.c"
 
 /* Free one virtual pmp entry according to priorty */
 void pmp_free(int priority) {
