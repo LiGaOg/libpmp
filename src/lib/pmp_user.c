@@ -74,222 +74,150 @@ unsigned char query_privilege(unsigned int addr) {
   }
 }
 
-Node* create_4nodes(Node* tobe_freed_next, unsigned int start, unsigned int end, unsigned char privilege, int v_pmp_id){
-  unsigned int next_start = tobe_freed_next->start, next_end = tobe_freed_next-> end;
-  unsigned char next_privilege = tobe_freed_next->privilege;
-  int next_v_pmp_id = tobe_freed_next -> v_pmp_id;
-
-  if(start < next_start){
-    if(end < next_end){
-      Node* node1 = malloc(sizeof(Node));
-      node1 -> start = start;
-      node1 -> end = next_start;
-      node1 -> privilege = privilege;
-      node1 -> flag = 0;
-      node1 -> v_pmp_id = v_pmp_id;
-      node1 -> lru_time = 0;
-
-      Node* node2 = malloc(sizeof(Node));
-      node2 -> start = next_start;
-      node2 -> end = end;
-      node2 -> privilege = privilege;
-      node2 -> flag = 0;
-      node2 -> v_pmp_id = v_pmp_id;
-      node2 -> lru_time = 0;
-
-      Node* node3 = malloc(sizeof(Node));
-      node3 -> start = next_start;
-      node3 -> end = end;
-      node3 -> privilege = next_privilege;
-      node3 -> flag = 0;
-      node3 -> v_pmp_id = next_v_pmp_id;
-      node3 -> lru_time = 0;
-
-      Node* node4 = malloc(sizeof(Node));
-      node4 -> start = next_start;
-      node4 -> end = end;
-      node4 -> privilege = next_privilege;
-      node4 -> flag = 0;
-      node4 -> v_pmp_id = next_v_pmp_id;
-      node4 -> lru_time = 0;
-
-      node1 -> next = node2;
-      node2 -> next = node3;
-      node3 -> next = node4;
-      node4 -> next = NULL;
-      return node1;
-    }else {
-      Node* node1 = malloc(sizeof(Node));
-      node1 -> start = start;
-      node1 -> end = next_start;
-      node1 -> privilege = privilege;
-      node1 -> flag = 0;
-      node1 -> v_pmp_id = v_pmp_id;
-      node1 -> lru_time = 0;
-
-      Node* node2 = malloc(sizeof(Node));
-      node2 -> start = next_start;
-      node2 -> end = next_end;
-      node2 -> privilege = privilege;
-      node2 -> flag = 0;
-      node2 -> v_pmp_id = v_pmp_id;
-      node2 -> lru_time = 0;
-
-      Node* node3 = malloc(sizeof(Node));
-      node3 -> start = next_end;
-      node3 -> end = end;
-      node3 -> privilege = privilege;
-      node3 -> flag = 0;
-      node3 -> v_pmp_id = v_pmp_id;
-      node3 -> lru_time = 0;
-
-      Node* node4 = malloc(sizeof(Node));
-      node4 -> start = next_start;
-      node4 -> end = next_end;
-      node4 -> privilege = next_privilege;
-      node4 -> flag = 0;
-      node4 -> v_pmp_id = next_v_pmp_id;
-      node4 -> lru_time = 0;
-
-      node1 -> next = node2;
-      node2 -> next = node3;
-      node3 -> next = node4;
-      node4 -> next = NULL;
-      return node1;
-    }
-  }else {
-    if(end < next_end){
-      Node* node1 = malloc(sizeof(Node));
-      node1 -> start = next_start;
-      node1 -> end = start;
-      node1 -> privilege = next_privilege;
-      node1 -> flag = 0;
-      node1 -> v_pmp_id = next_v_pmp_id;
-      node1 -> lru_time = 0;
-
-      Node* node2 = malloc(sizeof(Node));
-      node2 -> start = start;
-      node2 -> end = end;
-      node2 -> privilege = next_privilege;
-      node2 -> flag = 0;
-      node2 -> v_pmp_id = next_v_pmp_id;
-      node2 -> lru_time = 0;
-
-      Node* node3 = malloc(sizeof(Node));
-      node3 -> start = end;
-      node3 -> end = next_end;
-      node3 -> privilege = next_privilege;
-      node3 -> flag = 0;
-      node3 -> v_pmp_id = next_v_pmp_id;
-      node3 -> lru_time = 0;
-
-      Node* node4 = malloc(sizeof(Node));
-      node4 -> start = start;
-      node4 -> end = end;
-      node4 -> privilege = privilege;
-      node4 -> flag = 0;
-      node4 -> v_pmp_id = v_pmp_id;
-      node4 -> lru_time = 0;
-
-      node1 -> next = node2;
-      node2 -> next = node3;
-      node3 -> next = node4;
-      node4 -> next = NULL;
-      return node1;
-    }else{
-      Node* node1 = malloc(sizeof(Node));
-      node1 -> start = next_start;
-      node1 -> end = start;
-      node1 -> privilege = next_privilege;
-      node1 -> flag = 0;
-      node1 -> v_pmp_id = next_v_pmp_id;
-      node1 -> lru_time = 0;
-
-      Node* node2 = malloc(sizeof(Node));
-      node2 -> start = start;
-      node2 -> end = next_end;
-      node2 -> privilege = next_privilege;
-      node2 -> flag = 0;
-      node2 -> v_pmp_id = next_v_pmp_id;
-      node2 -> lru_time = 0;
-
-      Node* node3 = malloc(sizeof(Node));
-      node3 -> start = start;
-      node3 -> end = next_end;
-      node3 -> privilege = privilege;
-      node3 -> flag = 0;
-      node3 -> v_pmp_id = v_pmp_id;
-      node3 -> lru_time = 0;
-
-      Node* node4 = malloc(sizeof(Node));
-      node4 -> start = next_end;
-      node4 -> end = end;
-      node4 -> privilege = privilege;
-      node4 -> flag = 0;
-      node4 -> v_pmp_id = v_pmp_id;
-      node4 -> lru_time = 0;
-
-      node1 -> next = node2;
-      node2 -> next = node3;
-      node3 -> next = node4;
-      node4 -> next = NULL;
-      return node1;
-    }
-  }
-}
-
-Node* collect_intersect_nodes(unsigned int start, unsigned int end, unsigned char privilege, int v_pmp_id){
+Node* collect_intersect_nodes(unsigned int start, unsigned int end){
   Node* head = NULL;
-  Node* add_temp = NULL;
+  Node* insert_temp = NULL;
   Node* temp = pmp_node_head;
-
-  int has_intersect = 0;
-  
-  while(temp != NULL){
-    Node* next = temp -> next;
+  while(temp!= NULL){
+    Node* next = temp->next;
     if(next == NULL){
       break;
     }
 
-    unsigned int next_start = next->start, next_end = next-> end;
-    unsigned char next_privilege = next->privilege;
-    int next_v_pmp_id = next -> v_pmp_id;
-
-    int intersect = next_start < end || start < next_end;
-    if(intersect){
-      has_intersect = 1;
-      Node* next_next = next->next;
-      temp -> next = next_next;
-
-      Node* created_4nodes = create_4nodes(next, start, end, privilege, v_pmp_id);
+    int next_start = next -> start, next_end = next-> end;
+    if(next_start <= end && start <= next_end){
+      Node* next_next = next -> next;
       if(head == NULL){
-        head = created_4nodes;
+        head = next;
+        insert_temp = next;
       }else{
-        add_temp = head;
-        while(1){
-          if(add_temp -> next == NULL){
-            add_temp -> next = created_4nodes;
-            break;
-          }
-          add_temp = add_temp->next;
-        }
+        insert_temp -> next = next;
+        insert_temp = insert_temp -> next;
       }
-      free(next);
+      temp -> next = next_next;
+    }else {
+      temp = temp -> next;
     }
-    
-    temp = temp -> next;
   }
 
-  if(has_intersect){
-    return head;
-  }else{
-    head = malloc(sizeof(Node));
-    head -> start = start;
-    head -> end = end;
-    head -> privilege = privilege;
-    head -> v_pmp_id = v_pmp_id;
-    return head;
+  return head;
+}
+
+int contains(int* arr,int arr_length, int val){
+  for(int i = 0; i < arr_length; i++){
+    if(arr[i] == val){
+      return 1;
+    }
   }
+
+  return 0;
+}
+
+void sort_arr(int* arr, int arr_length){
+  for (int i = 0; i < arr_length - 1; i++) {
+    for (int j = 0; j < arr_length - 1 - i; j++) {
+      if(arr[j] > arr[j + 1]){
+        int temp = arr[j];
+        arr[j] = arr[j + 1];
+        arr[j + 1] = temp;
+      }
+    }
+  }
+}
+
+Node* reorganize_collected(Node* collected, 
+          unsigned int start, unsigned int end, 
+          unsigned char privilege, int v_pmp_id){
+  Node* head = collected;
+
+  int all_place[1000];
+  int number = 0;
+
+  all_place[number] = start;
+  number++;
+  all_place[number] = end;
+  number++;
+
+  while(collected != NULL){
+    int s = collected -> start, e = collected -> end;
+    if(!contains(all_place, number, s)){
+      all_place[number] = s;
+      number++;
+    }
+
+    if(!contains(all_place, number, e)){
+      all_place[number] = e;
+      number++;
+    }
+
+    collected = collected -> next;
+  }
+
+  sort_arr(all_place, number);
+  
+  Node* temp = head;
+  Node* result_head = NULL;
+  Node* result_temp = NULL;
+
+  int all_place_index = 0;
+  while(all_place[all_place_index] < start){
+    all_place_index++;
+  }
+
+  while(all_place[all_place_index] < end){
+    int new_start = all_place[all_place_index];
+    int new_end = all_place[all_place_index + 1];
+    Node* new_node = malloc(sizeof(Node));
+    new_node -> start = new_start;
+    new_node -> end = new_end;
+    new_node -> privilege = privilege;
+    new_node -> flag = 0;
+    new_node -> next = NULL;
+    new_node -> v_pmp_id = v_pmp_id;
+
+    all_place_index++;
+    if(result_head == NULL){
+      result_head = new_node;
+      result_temp = new_node;
+    }else{
+      result_temp -> next = new_node;
+      result_temp = result_temp->next;
+    }
+  }
+
+  while(temp != NULL){
+    all_place_index = 0;
+    while(all_place[all_place_index] < temp -> start){
+      all_place_index++;
+    }
+
+    while(all_place[all_place_index] < temp -> end){
+      int new_start = all_place[all_place_index];
+      int new_end = all_place[all_place_index + 1];
+      Node* new_node = malloc(sizeof(Node));
+      new_node -> start = new_start;
+      new_node -> end = new_end;
+      new_node -> privilege = temp -> privilege;
+      new_node -> flag = 0;
+      new_node -> next = NULL;
+      new_node -> v_pmp_id = temp -> v_pmp_id;
+
+      all_place_index++;
+      if(result_head == NULL){
+        result_head = new_node;
+        result_temp = new_node;
+      }else{
+        result_temp -> next = new_node;
+        result_temp = result_temp->next;
+      }
+    }
+    Node* tobe_free = temp;
+
+    temp = temp -> next;
+    free(tobe_free);
+  }
+
+  return result_head;
 }
 
 void clear_cache(){
@@ -333,7 +261,8 @@ void set_cache(unsigned int start){
 void pmp_mmap(unsigned int start, unsigned int end, unsigned char privilege,
               int v_pmp_id) {
   clear_cache();
-  Node* collected = collect_intersect_nodes(start, end, privilege, v_pmp_id);
+  Node* collected = collect_intersect_nodes(start, end);
+  Node* reorganized = reorganize_collected(collected, start, end, privilege, v_pmp_id);
 
   Node* temp = pmp_node_head;
 
@@ -341,7 +270,7 @@ void pmp_mmap(unsigned int start, unsigned int end, unsigned char privilege,
     temp = temp -> next;
   }
 
-  temp -> next = collected;
+  temp -> next = reorganized;
 
   set_cache(start);
   refresh();
