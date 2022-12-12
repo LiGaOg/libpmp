@@ -101,25 +101,25 @@ void write_pmpcfg(int pmpcfg_id, uint8_t pmpcfg_content) {
 	if (pmpcfg_id >= 0 && pmpcfg_id <= 3) {
 		__asm__ __volatile__(
 			"csrw pmpcfg0, %0"
-			:"r"(pmpcfg_value)
+			::"r"(pmpcfg_value)
 		);
 	}
 	else if (pmpcfg_id >= 4 && pmpcfg_id <= 7) {
 		__asm__ __volatile__(
 			"csrw pmpcfg1, %0"
-			:"r"(pmpcfg_value)
+			::"r"(pmpcfg_value)
 		);
 	}
 	else if (pmpcfg_id >= 8 && pmpcfg_id <= 11) {
 		__asm__ __volatile__(
 			"csrw pmpcfg2, %0"
-			:"r"(pmpcfg_value)
+			::"r"(pmpcfg_value)
 		);
 	}
 	else if (pmpcfg_id >= 12 && pmpcfg_id <= 15) {
 		__asm__ __volatile__(
 			"csrw pmpcfg3, %0"
-			:"r"(pmpcfg_value)
+			::"r"(pmpcfg_value)
 		);
 	}
 }
@@ -240,101 +240,99 @@ void write_pmpaddr(int pmpaddr_id, uint32_t pmpaddr_content) {
 	if (pmpaddr_id == 0) {
 		__asm__ __volatile__(
 			"csrw pmpaddr0 %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 1) {
 		__asm__ __volatile__(
 			"csrw pmpaddr1, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 2) {
 		__asm__ __volatile__(
 			"csrw pmpaddr2, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 3) {
 		__asm__ __volatile__(
 			"csrw pmpaddr3, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 4) {
 		__asm__ __volatile__(
 			"csrw pmpaddr4, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 5) {
 		__asm__ __volatile__(
 			"csrw pmpaddr5, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 6) {
 		__asm__ __volatile__(
 			"csrw pmpaddr6, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 7) {
 		__asm__ __volatile__(
 			"csrw pmpaddr7, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 8) {
 		__asm__ __volatile__(
 			"csrw pmpaddr8, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 9) {
 		__asm__ __volatile__(
 			"csrw pmpaddr9, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 10) {
 		__asm__ __volatile__(
 			"csrw pmpaddr10, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 11) {
 		__asm__ __volatile__(
 			"csrw pmpaddr11, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 12) {
 		__asm__ __volatile__(
 			"csrw pmpaddr12, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 13) {
 		__asm__ __volatile__(
 			"csrw pmpaddr13, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 14) {
 		__asm__ __volatile__(
 			"csrw pmpaddr14, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
 	else if (pmpaddr_id == 15) {
 		__asm__ __volatile__(
 			"csrw pmpaddr15, %0"
-			:"r"(pmpaddr_value)
+			::"r"(pmpaddr_content)
 		);
 	}
-	return pmpaddr_value;
-
 }
 /*
  * This function is used to find the entry which contains addr
@@ -366,15 +364,9 @@ virtual_pmp_entry *find_highest_priority_entry(uint32_t addr) {
 }
 /* Refresh middle layer to physical PMP entries */
 void refresh() {
-	for (int i = 0; i < middle->number_of_node; i += 2) {
-		uint32_t start = middle->cache[i]->start;
-		uint32_t end = middle->cache[i]->end;
-		uint8_t privilege = middle->cache[i]->privilege;
-		uint8_t mask = 0x08;
-		uint8_t pmpcfg_content = privilege | mask;
-		write_pmpcfg(i, 0);
-		write_pmpcfg(i + 1, pmpcfg_content);
-		write_pmpaddr(i, start);
-		write_pmpaddr(i + 1, end);
-	}
+
+	/* Trigger breakpoint exception and jump to M mode */
+	__asm__ __volatile__(
+		"ebreak"
+	);
 }

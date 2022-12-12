@@ -3,6 +3,8 @@
 /* Integer types */
 
 #define NULL 0
+#define XLEN 32
+#define MXLEN 32
 typedef unsigned int size_t;
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
@@ -144,6 +146,7 @@ void add_virtual_pmp_entry_to_cache(virtual_pmp_entry *target) {
 		virtual_pmp_entry *evicted_entry =  middle->cache[evict_from_middle()];
 		middle->cache[evict_from_middle()] = target;
 		adjust_middle_layer();
+		/* Add evicted PMP entry back to LinkedList */
 		add_virtual_pmp_entry(evicted_entry);
 	}
 }
