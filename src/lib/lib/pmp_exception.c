@@ -2,9 +2,9 @@
 #include "pmp_system_library.h"
 
 void pmp_exception_handler() {
-
-	uint32_t addr;
 	
+	/* The exception handler is running in M mode */
+
 	/* If the exception is breakpoint, then executing refresh */
 	uint32_t mcause;
 	__asm__ __volatile__(
@@ -24,7 +24,14 @@ void pmp_exception_handler() {
 			write_pmpaddr(i + 1, end);
 		}
 	}
+	/* If not breakpoint exception, then it is PMP related */
 	else {
+		/* Read the invalid address from mtval */
+		uint32_t addr;
+		__asm__ __volatile__(
+			"csrr %0, mtval"
+			:"+r"(addr)
+		);
 		/* Find the entry which contains addr and has
 		 * the hightest priority in pmp entry*/
 		virtual_pmp_entry *target_entry = NULL;
