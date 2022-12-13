@@ -1,5 +1,5 @@
 #include "pmp_types.h"
-
+extern void free(void *);
 /*
  * This function is used to read the value of pmpcfg register under RV32
  * params:
@@ -369,4 +369,28 @@ void refresh() {
 	__asm__ __volatile__(
 		"ebreak"
 	);
+}
+
+uint32_t addr2pmpaddr(uint32_t addr) {
+	return addr >> 2;
+}
+
+uint32_t max(uint32_t s1, uint32_t s2) {
+	return s1 >= s2 ? s1 : s2;
+}
+uint32_t min(uint32_t s1, uint32_t s2) {
+	return s1 >= s2 ? s2 : s1;
+}
+
+int is_intersect(uint32_t s1, uint32_t e1, uint32_t s2, uint32_t e2) {
+	return max(s1, s2) < min(e1, e2);
+}
+
+void virtual_pmp_entry_free(virtual_pmp_entry *head) {
+	virtual_pmp_entry *cur = head;
+	while (cur != NULL) {
+		virtual_pmp_entry *next = cur->next;
+		free((void *)cur);
+		cur = next;
+	}
 }
