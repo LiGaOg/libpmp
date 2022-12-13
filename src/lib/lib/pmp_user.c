@@ -19,7 +19,7 @@ void pmp_virtualize_init() {
 	);
 	original_sstatus |= sstatus_mask;
 	__asm__ __volatile__(
-		"csrw sstatus %0"
+		"csrw sstatus, %0"
 		:"+r"(original_sstatus)
 	);
 	/* Enable sie.SSIP */
@@ -30,7 +30,7 @@ void pmp_virtualize_init() {
 	);
 	original_sie |= sie_mask;
 	__asm__ __volatile__(
-		"csrw sie %0"
+		"csrw sie, %0"
 		:"+r"(original_sie)
 	);
 	/* Config stvec to exception handler */
