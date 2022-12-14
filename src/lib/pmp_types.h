@@ -1,5 +1,5 @@
-#ifndef __TYPES_H__
-#define __TYPES_H__
+#ifndef __PMP_TYPES_H__
+#define __PMP_TYPES_H__
 /* Integer types */
 
 #define NULL 0
@@ -164,5 +164,4 @@ void delete_middle_layer_entry(virtual_pmp_entry *target) {
 	adjust_middle_layer();
 }
 
-
-#endif /* __TYPES_H__ */
+#endif

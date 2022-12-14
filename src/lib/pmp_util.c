@@ -1,3 +1,5 @@
+#ifndef __PMP_UTIL_C__
+#define __PMP_UTIL_C__
 #include "pmp_types.h"
 extern void free(void *);
 /*
@@ -239,7 +241,7 @@ uint32_t read_pmpaddr(int pmpaddr_id) {
 void write_pmpaddr(int pmpaddr_id, uint32_t pmpaddr_content) {
 	if (pmpaddr_id == 0) {
 		__asm__ __volatile__(
-			"csrw pmpaddr0 %0"
+			"csrw pmpaddr0, %0"
 			::"r"(pmpaddr_content)
 		);
 	}
@@ -397,3 +399,4 @@ void virtual_pmp_entry_free(virtual_pmp_entry *head) {
 		cur = next;
 	}
 }
+#endif

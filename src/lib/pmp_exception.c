@@ -1,3 +1,5 @@
+#ifndef __PMP_EXCEPTION_C__
+#define __PMP_EXCEPTION_C__
 #include "pmp_util.c"
 #include "pmp_system_library.h"
 
@@ -72,3 +74,4 @@ void pmp_exception_handler() {
 	/* Switch to S mode */
 	__asm__ __volatile__("mret");
 }
+#endif

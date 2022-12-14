@@ -1,3 +1,5 @@
+#ifndef __PMP_DEBUG_C__
+#define __PMP_DEBUG_C__
 #include "pmp_system_library.h"
 #include "pmp_types.h"
 #include "pmp_util.c"
@@ -33,3 +35,4 @@ void visualize_physical_pmp_entries() {
 		printf("pmp%dcfg:%x pmpaddr%d:%x\n", i, read_pmpcfg(i), i, read_pmpaddr(i));
 	}
 }
+#endif
