@@ -578,6 +578,12 @@ void pmp_virtualize_init() {
 		"csrw stvec, %0"
 		::"r"(stvec)
 	);
+
+	/* Config mtvec to exception handler */
+	__asm__ __volatile__(
+		"csrw mtvec, %0"
+		::"r"(stvec)
+	);
 	/* Other virtualization work in libpmp */
 	init_middle_layer();
 

@@ -334,6 +334,10 @@ void write_pmpaddr(int pmpaddr_id, uint32_t pmpaddr_content) {
 		);
 	}
 }
+
+uint32_t addr2pmpaddr(uint32_t addr) {
+	return addr >> 2;
+}
 /*
  * This function is used to find the entry which contains addr
  * and has the highest priority
@@ -352,7 +356,7 @@ virtual_pmp_entry *find_highest_priority_entry(uint32_t addr) {
 		uint32_t start = cur->start;
 		uint32_t end = cur->end;
 		uint8_t priority = cur->priority;
-		if (addr >= start && addr <= end) {
+		if (addr2pmpaddr( addr ) >= start && addr2pmpaddr( addr ) <= end) {
 			if (highest_priority != -1 && priority < highest_priority) {
 				highest_priority = priority;
 				target = cur;
@@ -369,11 +373,10 @@ void refresh() {
 	__asm__ __volatile__(
 		"ebreak"
 	);
+	__asm__ __volatile__("nop");
+	return ;
 }
 
-uint32_t addr2pmpaddr(uint32_t addr) {
-	return addr >> 2;
-}
 
 uint32_t max(uint32_t s1, uint32_t s2) {
 	return s1 >= s2 ? s1 : s2;

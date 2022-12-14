@@ -38,7 +38,7 @@ void pmp_exception_handler() {
 		for (size_t i = 0; i < middle->number_of_node; i ++) {
 			uint32_t start = middle->cache[i]->start;
 			uint32_t end = middle->cache[i]->end;
-			if (addr >= start && addr <= end) {
+			if (addr2pmpaddr( addr ) >= start && addr2pmpaddr( addr ) <= end) {
 				target_entry = middle->cache[i];
 				break;
 			}
@@ -57,6 +57,18 @@ void pmp_exception_handler() {
 			}
 		}
 	}
+
+	/* Increase mepc by 4 */
+	uint32_t mepc;
+	__asm__ __volatile__(
+		"csrr %0, mepc"
+		:"+r"(mepc)
+	);
+	mepc += 4;
+	__asm__ __volatile__(
+		"csrw mepc, %0"
+		::"r"(mepc)
+	);
 	/* Switch to S mode */
 	__asm__ __volatile__("mret");
 }

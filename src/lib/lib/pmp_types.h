@@ -143,8 +143,9 @@ void add_virtual_pmp_entry_to_cache(virtual_pmp_entry *target) {
 		middle->number_of_node ++;
 	}
 	else {
-		virtual_pmp_entry *evicted_entry =  middle->cache[evict_from_middle()];
-		middle->cache[evict_from_middle()] = target;
+		int evicted_index = evict_from_middle();
+		virtual_pmp_entry *evicted_entry =  middle->cache[evicted_index];
+		middle->cache[evicted_index] = target;
 		adjust_middle_layer();
 		/* Add evicted PMP entry back to LinkedList */
 		add_virtual_pmp_entry(evicted_entry);
