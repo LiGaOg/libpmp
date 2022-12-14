@@ -46,7 +46,7 @@ middle_layer * middle;
 void init_middle_layer() {
 	middle = (middle_layer *)malloc(sizeof(middle_layer));
 	middle->number_of_node = 0;
-	for (int i = 0; i < 8; i ++) {
+	for (int i = 0; i < CACHE_LEN; i ++) {
 		middle->cache[i] = NULL;
 	}
 }
@@ -60,7 +60,7 @@ int evict_from_middle() {
  * virtual pmp entries */
 void adjust_middle_layer() {
 	/* Split NULL region */
-	int i = 0, j = 7;
+	int i = 0, j = 6;
 	while (i < j) {
 		while (middle->cache[i] != NULL) i ++;
 		while (middle->cache[j] == NULL) j --;
@@ -87,7 +87,7 @@ void adjust_middle_layer() {
  * in the layer and put it to the linkedlist */
 void add_virtual_pmp_entry_to_cache(virtual_pmp_entry *target) {
 	/* If cache is not empty */
-	if (middle->number_of_node < 8) {
+	if (middle->number_of_node < CACHE_LEN) {
 		middle->cache[middle->number_of_node] = target;
 		adjust_middle_layer();
 		middle->number_of_node ++;

@@ -1,9 +1,9 @@
 #include "pmp_system_library.h"
-#include "pmp_debug.c"
+#include "pmp_debug.h"
 #include "pmp_types.h"
 #include "pmp_user.h"
 #include "pmp_exception.h"
-
+#include "pmp_util.h"
 
 /* Free one virtual pmp entry according to priorty */
 void pmp_free(int priority) {
@@ -400,7 +400,7 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 }
 
 void pmp_test_script() {
-	while (1) { printf("yes"); }
+	while (1) { printf("yes\n"); }
 }
 /* void pmp_test_script() { */
 
@@ -551,7 +551,7 @@ void pmp_virtualize_init() {
 	uint32_t sstatus_mask = 0x2;
 	uint32_t sie_mask = 0x2;
 	uint32_t stvec = pmp_exception_handler;
-	uint32_t mepc = 0x80000008;
+	uint32_t mepc = pmp_test_script;
 
 	/* Enable sstatus.SIE */
 	uint32_t original_sstatus;
@@ -594,6 +594,16 @@ void pmp_virtualize_init() {
 		"csrw mepc, %0"
 		::"r"(mepc)
 	);
+
+	/* Config one PMP entry to enable mret */
+	uint32_t pmpaddr14 = 0x00000000;
+	uint32_t pmpaddr15 = 0xffffffff;
+	uint8_t pmp15cfg = 0x0f;
+
+	write_pmpaddr(14, pmpaddr14);
+	write_pmpaddr(15, pmpaddr15);
+	write_pmpcfg(15, pmp15cfg);
+
 	/* Switch to S mode and jump to kernel */
 	__asm__ __volatile__(
 		"mret"

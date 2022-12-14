@@ -5,6 +5,7 @@
 #define NULL 0
 #define XLEN 32
 #define MXLEN 32
+#define CACHE_LEN 7
 typedef unsigned int size_t;
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
@@ -48,7 +49,7 @@ struct middle_layer {
 	/* Number of virtual pmp entries that are in middle layer */
 	int number_of_node;
 	/* Actual pmp entry, the pmp entry is sorted with priority */
-	virtual_pmp_entry * cache[8];
+	virtual_pmp_entry * cache[CACHE_LEN];
 };
 typedef struct middle_layer middle_layer;
 
