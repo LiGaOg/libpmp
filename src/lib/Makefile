@@ -3,9 +3,10 @@ CC = riscv64-unknown-elf-gcc
 CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -Wall
 # Store .c source file
 SRCS_C = \
+	pmp_types.c \
 	pmp_util.c \
-	pmp_debug.c \
 	pmp_exception.c \
+	pmp_debug.c \
 	pmp_user.c
 
 # Names for relocatable object files
