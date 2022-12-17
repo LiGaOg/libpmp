@@ -3,26 +3,12 @@
 
 void muti_test();
 
-void testNoOverlap10();
+void testNoOverlap(unsigned int request_num);
 
-void testNoOverlap100();
+void testSequentialOverlap(unsigned int request_num, unsigned int space_len, float overlap_ratio);
 
-void testNoOverlap1000();
-
-void testNoOverlap10000();
-
-void testOverlap10();
-
-void testOverlap100();
-
-void testOverlap1000();
-
-void testOverlap10000();
+void testCentricOverlap(unsigned int request_num, unsigned int init_space_len, unsigned int extend_radius);
 
 void testHighOverlap();
-
-void testFree100();
-
-void testFree1000();
 
 unsigned long read_cycles(void);
