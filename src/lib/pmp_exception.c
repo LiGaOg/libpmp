@@ -2,6 +2,7 @@
 #include "pmp_system_library.h"
 #include "pmp_exception.h"
 
+
 void pmp_exception_handler() {
 	
 	/* The exception handler is running in M mode */
@@ -11,6 +12,10 @@ void pmp_exception_handler() {
 	__asm__ __volatile__(
 		"csrr %0, mcause"
 		:"+r"(mcause)
+	);
+
+	__asm__ __volatile__(
+		"csrw mepc, ra"
 	);
 	if (mcause == 0x3) {
 		for (int i = 0; i < middle->number_of_node; i += 2) {
@@ -58,18 +63,6 @@ void pmp_exception_handler() {
 			}
 		}
 	}
-
-	/* Increase mepc by 4 */
-	uint32_t mepc;
-	__asm__ __volatile__(
-		"csrr %0, mepc"
-		:"+r"(mepc)
-	);
-	mepc += 4;
-	__asm__ __volatile__(
-		"csrw mepc, %0"
-		::"r"(mepc)
-	);
 	/* Switch to S mode */
 	__asm__ __volatile__("mret");
 }

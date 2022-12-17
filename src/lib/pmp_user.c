@@ -29,6 +29,13 @@ void pmp_free(int priority) {
 
 /* Create a pmp isolation request */
 void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int priority) {
+
+	/* Store ra into stval */
+	uint32_t ra;
+	__asm__ __volatile__(
+		"move %0, ra"
+		:"+r"(ra)
+	);
 	
 	/* Find all intersected virtual pmp entry in linkedlist and form a new linkedlist */
 	virtual_pmp_entry *pmp_entry_head = NULL;
@@ -61,6 +68,22 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 		}
 	}
 	/* Now pmp_entry_head stores all entries intersects with [start, end] */
+
+	/* If pmp_entry_head is NULL, then no intersection found */
+	if (pmp_entry_head == NULL) {
+		/* Firstly, create a node */
+		virtual_pmp_entry *newEntry = (virtual_pmp_entry *)malloc(sizeof(virtual_pmp_entry));
+		newEntry->start = start;
+		newEntry->end = end;
+		newEntry->priority = priority;
+		newEntry->privilege = privilege;
+
+		add_virtual_pmp_entry_to_cache(newEntry);
+
+		refresh();
+		return ;
+
+	}
 
 	/* Sort pmp_entry_head linkedlist according to the left side of interval */
 	
@@ -397,11 +420,28 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 	/* Refresh */
 	refresh();
 
+	/* Restore ra and return */
+	__asm__ __volatile__(
+		"move ra, %0"
+		::"r"(ra)
+	);
+
+
+}
+
+void jump_target() {
+	while (1) {}
 }
 
 void pmp_test_script() {
-	while (1) { printf("yes\n"); }
+
+	uint32_t addr1 = addr2pmpaddr(0x87E00004);
+	uint32_t addr2 = addr2pmpaddr(0x87E00018);
+	pmp_isolation_request(addr1, addr2, 0x6, 3);
+	printf("Test 1 PASSED");
+	while (1) {}
 }
+
 /* void pmp_test_script() { */
 
 /* 	/1* Tested region is [0x87E00000, 0x87F00000] *1/ */

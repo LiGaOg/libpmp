@@ -372,8 +372,6 @@ void refresh() {
 	__asm__ __volatile__(
 		"ebreak"
 	);
-	__asm__ __volatile__("nop");
-	return ;
 }
 
 
