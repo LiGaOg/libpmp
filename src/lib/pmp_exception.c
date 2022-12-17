@@ -58,11 +58,18 @@ void pmp_exception_handler() {
 			if (virtual_target_entry != NULL) {
 				delete_virtual_pmp_entry(virtual_target_entry);
 				add_virtual_pmp_entry_to_cache(virtual_target_entry);
-				refresh();
+				for (int i = 0; i < middle->number_of_node; i += 2) {
+					uint32_t start = middle->cache[i]->start;
+					uint32_t end = middle->cache[i]->end;
+					uint8_t privilege = middle->cache[i]->privilege;
+					uint8_t mask = 0x08;
+					uint8_t pmpcfg_content = privilege | mask;
+					write_pmpcfg(i, 0);
+					write_pmpcfg(i + 1, pmpcfg_content);
+					write_pmpaddr(i, start);
+					write_pmpaddr(i + 1, end);
+				}
 			}
 		}
 	}
-
-	/* Switch to S mode */
-	__asm__ __volatile__("mret");
 }

@@ -367,7 +367,7 @@ virtual_pmp_entry *find_highest_priority_entry(uint32_t addr) {
 	return target;
 }
 /* Refresh middle layer to physical PMP entries */
-void refresh() {
+inline void refresh() {
 
 	/* Trigger breakpoint exception and jump to M mode */
 	__asm__ __volatile__(
