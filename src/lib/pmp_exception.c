@@ -2,9 +2,14 @@
 #include "pmp_system_library.h"
 #include "pmp_exception.h"
 
+unsigned long excepetion_count = 0;
+
 void pmp_exception_handler() {
 	
 	/* The exception handler is running in M mode */
+
+    // Used to pressure test
+    excepetion_count += 1;
 
 	/* If the exception is breakpoint, then executing refresh */
 	uint32_t mcause;
@@ -72,4 +77,10 @@ void pmp_exception_handler() {
 	);
 	/* Switch to S mode */
 	__asm__ __volatile__("mret");
+}
+
+unsigned long getNset_exception_count(){
+    unsigned long tmp = excepetion_count;
+    excepetion_count = 0;
+    return tmp;
 }
