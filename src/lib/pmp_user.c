@@ -5,6 +5,9 @@
 #include "pmp_exception.h"
 #include "pmp_util.h"
 
+
+extern void _save_context();
+
 /* Free one virtual pmp entry according to priorty */
 void pmp_free(int priority) {
 	
@@ -30,13 +33,6 @@ void pmp_free(int priority) {
 /* Create a pmp isolation request */
 void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int priority) {
 
-	/* Store ra into stval */
-	uint32_t ra;
-	__asm__ __volatile__(
-		"move %0, ra"
-		:"+r"(ra)
-	);
-	
 	/* Find all intersected virtual pmp entry in linkedlist and form a new linkedlist */
 	virtual_pmp_entry *pmp_entry_head = NULL;
 	virtual_pmp_entry *cur = dummy.head;
@@ -420,13 +416,6 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 	/* Refresh */
 	refresh();
 
-	/* Restore ra and return */
-	__asm__ __volatile__(
-		"move ra, %0"
-		::"r"(ra)
-	);
-
-
 }
 
 void jump_target() {
@@ -444,7 +433,6 @@ void pmp_test_script() {
 
 	pmp_isolation_request(addr1, addr2, 0x3, 2);
 
-	jump_target();
 	addr1 = addr2pmpaddr(0x87E0000C);
 	addr2 = addr2pmpaddr(0x87E00010);
 
@@ -602,7 +590,7 @@ void pmp_virtualize_init() {
 	/* Initially, the machine is running in M mode */
 	uint32_t sstatus_mask = 0x2;
 	uint32_t sie_mask = 0x2;
-	uint32_t stvec = pmp_exception_handler;
+	uint32_t stvec = _save_context;
 	uint32_t mepc = pmp_test_script;
 
 	/* Enable sstatus.SIE */

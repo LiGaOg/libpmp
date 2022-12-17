@@ -2,9 +2,11 @@
 #include "pmp_system_library.h"
 #include "pmp_exception.h"
 
+extern void _restore_context();
 
 void pmp_exception_handler() {
 	
+
 	/* The exception handler is running in M mode */
 
 	/* If the exception is breakpoint, then executing refresh */
@@ -14,9 +16,6 @@ void pmp_exception_handler() {
 		:"+r"(mcause)
 	);
 
-	__asm__ __volatile__(
-		"csrw mepc, ra"
-	);
 	if (mcause == 0x3) {
 		for (int i = 0; i < middle->number_of_node; i += 2) {
 			uint32_t start = middle->cache[i]->start;
@@ -63,6 +62,7 @@ void pmp_exception_handler() {
 			}
 		}
 	}
+
 	/* Switch to S mode */
 	__asm__ __volatile__("mret");
 }
