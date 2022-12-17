@@ -438,8 +438,20 @@ void pmp_test_script() {
 	uint32_t addr1 = addr2pmpaddr(0x87E00004);
 	uint32_t addr2 = addr2pmpaddr(0x87E00018);
 	pmp_isolation_request(addr1, addr2, 0x6, 3);
+
+	addr1 = addr2pmpaddr(0x87E00008);
+	addr2 = addr2pmpaddr(0x87E00014);
+
+	pmp_isolation_request(addr1, addr2, 0x3, 2);
+
+	jump_target();
+	addr1 = addr2pmpaddr(0x87E0000C);
+	addr2 = addr2pmpaddr(0x87E00010);
+
+	pmp_isolation_request(addr1, addr2, 0x1, 1);
+
 	printf("Test 1 PASSED");
-	while (1) {}
+	jump_target();
 }
 
 /* void pmp_test_script() { */
