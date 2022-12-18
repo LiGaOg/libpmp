@@ -6,14 +6,15 @@
 void visualize_linkedlist() {
 	virtual_pmp_entry *cur = dummy.head;
 	for (int i = 0; i < dummy.number_of_node; i ++) {
-		printf("start:%x\n", cur->start);
-		printf("end:%x\n", cur->end);
+		printf("start:%x\n", cur->start << 2);
+		printf("end:%x\n", cur->end << 2);
 		printf("privilege:%x\n", cur->privilege);
 		printf("priority:%x\n", cur->priority);
 		if (i != dummy.number_of_node - 1) {
 			printf("|\n");
 			printf("|\n");
 		}
+		cur = cur->next;
 	}
 }
 void visualize_middle_layer() {

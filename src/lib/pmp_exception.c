@@ -62,6 +62,25 @@ void pmp_exception_handler() {
 		}
 		/* If this target_entry is in actual pmp, ignore it */
 		if (target_entry != NULL) {
+
+			/* Find the entry in the linkedlist which contains the addr and has the highest priority */
+			virtual_pmp_entry *virtual_target_entry = find_highest_priority_entry(addr);
+			if (virtual_target_entry != NULL && virtual_target_entry->priority < target_entry->priority) {
+				add_virtual_pmp_entry_to_cache(virtual_target_entry);
+				for (int i = 0; i < middle->number_of_node; i ++) {
+					uint32_t start = middle->cache[i]->start;
+					uint32_t end = middle->cache[i]->end;
+					uint8_t privilege = middle->cache[i]->privilege;
+					uint8_t mask = 0x08;
+					uint8_t pmpcfg_content = privilege | mask;
+					write_pmpcfg(i * 2, 0);
+					write_pmpcfg(i * 2 + 1, pmpcfg_content);
+					write_pmpaddr(i * 2, start);
+					write_pmpaddr(i * 2 + 1, end);
+				}
+				/* Don't increment mepc by 4 because this instruction access needs executing again */
+				return ;
+			}
 			/* Increment mepc by 4 */
 			uint32_t mepc;
 			
