@@ -69,13 +69,13 @@ void testNoOverlap(unsigned int request_num){
     printf("average free time = %lu\n", avg_time_free);
 }
 
-void testSequentialOverlap(unsigned int request_num, unsigned int space_len, int overlap){
+void testSequentialOverlap(unsigned int request_num, unsigned int space_len, int overlap_ratio){
     /**
         Allocate memory forward one by one
 
         request_num: request_num * space_len <= 0x100000, cannot be NULL
         space_len: 4n (n=1,2,3,4,...) if it isn't NULL, it can be NULL
-        overlap: space_len * overlap_ratio should be n (n=1,2,3,4,...), cannot be NULL
+        overlap_ratio: space_len * overlap_ratio should be n (n=1,2,3,4,...), cannot be NULL
     */
     unsigned int start_bound = 0x87E00000;
     unsigned int start = start_bound;

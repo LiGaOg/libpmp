@@ -7,7 +7,7 @@ extern void muti_test();
 
 extern void testNoOverlap(unsigned int request_num);
 
-extern void testSequentialOverlap(unsigned int request_num, unsigned int space_len, float overlap_ratio);
+extern void testSequentialOverlap(unsigned int request_num, unsigned int space_len, int overlap_ratio);
 
 extern void testCentricOverlap(unsigned int request_num, unsigned int init_space_len, unsigned int extend_radius);
 

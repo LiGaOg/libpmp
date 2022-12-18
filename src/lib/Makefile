@@ -7,7 +7,8 @@ SRCS_C = \
 	pmp_util.c \
 	pmp_exception.c \
 	pmp_debug.c \
-	pmp_user.c
+	pmp_user.c \
+	pressure_test.c
 
 # Names for relocatable object files
 OBJS += $(SRCS_C:.c=.o)
