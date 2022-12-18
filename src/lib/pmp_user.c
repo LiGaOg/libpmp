@@ -44,7 +44,7 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 				pmp_entry_head->end = cur->end;
 				pmp_entry_head->priority = cur->priority;
 				pmp_entry_head->privilege = cur->privilege;
-				pmp_entry_head->start = pmp_entry_head->end = NULL;
+				pmp_entry_head->prev = pmp_entry_head->next = NULL;
 				/* Deleted this node in original linkedlist */
 				delete_virtual_pmp_entry(cur);
 			}
@@ -73,7 +73,11 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 		newEntry->end = end;
 		newEntry->priority = priority;
 		newEntry->privilege = privilege;
+		
+		/* Insert this new node into linkedlist */
+		add_virtual_pmp_entry(newEntry);
 
+		/* Insert into cache */
 		add_virtual_pmp_entry_to_cache(newEntry);
 
 		refresh();
@@ -94,9 +98,11 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 	/* Sorting algorithm is selection sort */
 	virtual_pmp_entry *left_gate = dummy_head->next;
 	for (; left_gate != NULL; left_gate = left_gate->next) {
-		virtual_pmp_entry *cur = left_gate;
+		virtual_pmp_entry *cur = left_gate->next;
 		uint32_t start_max = 0xffffffff;
 		virtual_pmp_entry *target = NULL;
+
+		if (cur == NULL) break;
 		/* Find the node with the minimum start */
 		for (; cur != NULL; cur = cur->next) {
 			if (cur->start < start_max) {
@@ -105,14 +111,15 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 			}
 		}
 		/* Delete the node with minimum start */
-		cur->prev->next = cur->next;
-		cur->next->prev = cur->prev;
+		target->prev->next = target->next;
+		if (target->next != NULL)
+			target->next->prev = target->prev;
 
-		/* Insert cur into the left side of gate */
-		cur->prev = left_gate->prev;
-		cur->next = left_gate;
-		left_gate->prev->next = cur;
-		left_gate->prev = cur;
+		/* Insert target into the left side of gate */
+		target->prev = left_gate->prev;
+		target->next = left_gate;
+		left_gate->prev->next = target;
+		left_gate->prev = target;
 	}
 	/* Now dummy_head->next stores the sorted linkedlist */
 	virtual_pmp_entry *organized_entry_head = NULL;	
@@ -323,16 +330,23 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 	/* Free original linkedlist */
 	virtual_pmp_entry_free(dummy_head);
 
-	/* Find tail of linkedlist */
+	/* Find tail of linkedlist and count the number of node */
 	cur = organized_entry_head;
-	while (cur->next != NULL) cur = cur->next;
+	int cnt = 1;
+	while (cur->next != NULL) { 
+		cur = cur->next;
+		cnt ++;
+	}
 	virtual_pmp_entry *organized_entry_tail = cur;
 	
 	/* Insert organized virtual entry into linkedlist */
-	organized_entry_head->prev = dummy.head;
-	organized_entry_tail->next = dummy.head->next;
-	if (dummy.head->next != NULL) dummy.head->next->prev = organized_entry_tail;
-	dummy.head->next = organized_entry_head;
+	organized_entry_head->prev = NULL;
+	organized_entry_tail->next = dummy.head;
+
+	if (dummy.head != NULL) dummy.head->prev = organized_entry_tail;
+	dummy.head = organized_entry_head;
+
+	dummy.number_of_node += cnt;
 
 
 	/* Update cache according to specific rules */
@@ -343,17 +357,18 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 				cur = organized_entry_head;
 				int highest_priority = 0x3f3f3f3f;
 				virtual_pmp_entry *target = NULL;
+				int index = -1;
 				/* Find small interval with highest priority which is the same as [start, end] */
 				for (; cur != NULL; cur = cur->next) {
 					if (cur->start == middle->cache[i]->start && cur->end == middle->cache[i]->end) {
 						if (cur->priority >= highest_priority) continue;
 						highest_priority = cur->priority;
 						target = cur;
+						index = i;
 					}
 				}
 				if (target->priority < middle->cache[i]->priority) {
-					delete_virtual_pmp_entry(target);
-					add_virtual_pmp_entry_to_cache(target);
+					middle->cache[index] = target;
 				}
 			}
 			/* Case 2: [cache[i]->start, start, end, cache[i]->end] */
@@ -361,17 +376,18 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 				cur = organized_entry_head;
 				int highest_priority = 0x3f3f3f3f;
 				virtual_pmp_entry *target = NULL;
+				int index = -1;
 				/* Find small interval with highest priority which is the same as [start, end] */
 				for (; cur != NULL; cur = cur->next) {
 					if (cur->start == start && cur->end == end) {
 						if (cur->priority >= highest_priority) continue;
 						highest_priority = cur->priority;
 						target = cur;
+						index = i;
 					}
 				}
 				if (target->priority < middle->cache[i]->priority) {
-					delete_virtual_pmp_entry(target);
-					add_virtual_pmp_entry_to_cache(target);
+					middle->cache[i] = target;
 				}
 			}
 			/* Case 3: [start, cache[i]->start, end, cache[i]->end] */
@@ -379,17 +395,18 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 				cur = organized_entry_head;
 				int highest_priority = 0x3f3f3f3f;
 				virtual_pmp_entry *target = NULL;
+				int index = -1;
 				/* Find small interval with highest priority which is the same as [start, end] */
 				for (; cur != NULL; cur = cur->next) {
 					if (cur->start == middle->cache[i]->start && cur->end == end) {
 						if (cur->priority >= highest_priority) continue;
 						highest_priority = cur->priority;
 						target = cur;
+						index = i;
 					}
 				}
 				if (target->priority < middle->cache[i]->priority) {
-					delete_virtual_pmp_entry(target);
-					add_virtual_pmp_entry_to_cache(target);
+					middle->cache[i] = target;
 				}
 			}
 			/* Case 4: [cache[i]->start, start, cache[i]->end, end] */
@@ -397,17 +414,18 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 				cur = organized_entry_head;
 				int highest_priority = 0x3f3f3f3f;
 				virtual_pmp_entry *target = NULL;
+				int index = -1;
 				/* Find small interval with highest priority which is the same as [start, end] */
 				for (; cur != NULL; cur = cur->next) {
 					if (cur->start == start && cur->end == middle->cache[i]->end) {
 						if (cur->priority >= highest_priority) continue;
 						highest_priority = cur->priority;
 						target = cur;
+						index = i;
 					}
 				}
 				if (target->priority < middle->cache[i]->priority) {
-					delete_virtual_pmp_entry(target);
-					add_virtual_pmp_entry_to_cache(target);
+					middle->cache[i] = target;
 				}
 			}
 		}
