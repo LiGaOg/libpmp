@@ -2,18 +2,12 @@
 #include "pmp_system_library.h"
 #include "pmp_exception.h"
 
-
 extern void _restore_context();
-
-unsigned long excepetion_count = 0;
 
 void pmp_exception_handler() {
 	
 
 	/* The exception handler is running in M mode */
-
-    // Used to pressure test
-    excepetion_count += 1;
 
 	/* If the exception is breakpoint, then executing refresh */
 	uint32_t mcause;
@@ -142,10 +136,4 @@ void pmp_exception_handler() {
 			}
 		}
 	}
-}
-
-unsigned long getNset_exception_count(){
-    unsigned long tmp = excepetion_count;
-    excepetion_count = 0;
-    return tmp;
 }
