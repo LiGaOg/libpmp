@@ -422,23 +422,79 @@ void jump_target() {
 	while (1) {}
 }
 
-void pmp_test_script() {
+void test_case1() {
 
+	/* Write specific value */
+	uint8_t *ptr = (uint8_t *)(0x87E00006);
+	
+	/* 0x87E00006, 0x11 */
+	*(ptr) = 0x11;
+
+	/* 0x87E0000A, 0x45 */
+	ptr = (uint8_t *)0x87E0000A;
+	*(ptr) = 0x45;
+
+	/* 0x87E0000E, 0x14 */
+	ptr = (uint8_t *)0x87E0000E;
+	*(ptr) = 0x14;
+
+	/* 0x87E00012, 0x19 */
+	ptr = (uint8_t *)0x87E00012;
+	*(ptr) = 0x19;
+
+	/* 0x87E00016, 0x81 */
+	ptr = (uint8_t *)0x87E00016;
+	*(ptr) = 0x81;
+
+	/* [0x87E00004, 0x87E00018), _wx, 3 */
 	uint32_t addr1 = addr2pmpaddr(0x87E00004);
 	uint32_t addr2 = addr2pmpaddr(0x87E00018);
 	pmp_isolation_request(addr1, addr2, 0x6, 3);
 
+
+	/* [0x87E00008, 0x87E00014), rw_, 2*/
 	addr1 = addr2pmpaddr(0x87E00008);
 	addr2 = addr2pmpaddr(0x87E00014);
-
 	pmp_isolation_request(addr1, addr2, 0x3, 2);
 
+
+	/* [0x87E0000C, 0x87E00010), _wx, 1*/
 	addr1 = addr2pmpaddr(0x87E0000C);
 	addr2 = addr2pmpaddr(0x87E00010);
-
 	pmp_isolation_request(addr1, addr2, 0x1, 1);
 
-	printf("Test 1 PASSED");
+
+	/* Attempt to read 0x87E00006 */
+	uint8_t *ptr1 = (uint8_t *)0x87E00006;
+	uint8_t content1 = *(ptr1);
+	printf("testcase1.1 read 0x87E00006: %x, should be: %x, ok? %d\n", content1, 0x11, content1 != 0x11);
+	
+	/* Attempt to read 0x87E0000A */
+	ptr1 = (uint8_t *)0x87E0000A;
+	content1 = *(ptr1);
+	printf("testcase1.2 read 0x87E0000A: %x, should be: %x, ok? %d\n", content1, 0x45, content1 == 0x45);
+
+	/* Attempt to read 0x87E0000E */
+	ptr1 = (uint8_t *)0x87E0000E;
+	content1 = *(ptr1);
+	printf("testcase1.3 read 0x87E0000E: %x, should be: %x, ok? %d\n", content1, 0x14, content1 == 0x14);
+
+	/* Attempt to read 0x87E00012 */
+	ptr1 = (uint8_t *)0x87E00012;
+	content1 = *(ptr1);
+	printf("testcase1.4 read 0x87E00012: %x, should be %x, ok? %d\n", content1, 0x19, content1 == 0x19);
+
+	/* Attempt to read 0x87E00016 */
+	ptr1 = (uint8_t *)0x87E00016;
+	content1 = *(ptr1);
+	printf("testcase1.5 read 0x87E00016: %x, should be %x, ok? %d\n", content1, 0x81, content1 != 0x81);
+	
+	printf("Test 1 PASSED\n");
+}
+
+void pmp_test_script() {
+
+	test_case1();
 	jump_target();
 }
 

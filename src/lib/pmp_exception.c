@@ -17,16 +17,16 @@ void pmp_exception_handler() {
 	);
 
 	if (mcause == 0x3) {
-		for (int i = 0; i < middle->number_of_node; i += 2) {
+		for (int i = 0; i < middle->number_of_node; i ++) {
 			uint32_t start = middle->cache[i]->start;
 			uint32_t end = middle->cache[i]->end;
 			uint8_t privilege = middle->cache[i]->privilege;
 			uint8_t mask = 0x08;
 			uint8_t pmpcfg_content = privilege | mask;
-			write_pmpcfg(i, 0);
-			write_pmpcfg(i + 1, pmpcfg_content);
-			write_pmpaddr(i, start);
-			write_pmpaddr(i + 1, end);
+			write_pmpcfg(i * 2, 0);
+			write_pmpcfg(i * 2 + 1, pmpcfg_content);
+			write_pmpaddr(i * 2, start);
+			write_pmpaddr(i * 2 + 1, end);
 		}
 		uint32_t mepc;
 		
@@ -61,7 +61,22 @@ void pmp_exception_handler() {
 			}
 		}
 		/* If this target_entry is in actual pmp, ignore it */
-
+		if (target_entry != NULL) {
+			/* Increment mepc by 4 */
+			uint32_t mepc;
+			
+			/* Increment mepc by 4 to point to the next instruction of ebreak */
+			__asm__ __volatile__(
+				"csrr %0, mepc"
+				:"+r"(mepc)
+			);
+			mepc += 4;
+			__asm__ __volatile__(
+				"csrw mepc, %0"
+				::"r"(mepc)
+			);
+			return ;
+		}
 		/* If this target entry is not in */
 		if (target_entry == NULL) {
 			virtual_pmp_entry *virtual_target_entry = find_highest_priority_entry(addr);
@@ -70,18 +85,19 @@ void pmp_exception_handler() {
 			if (virtual_target_entry != NULL) {
 				delete_virtual_pmp_entry(virtual_target_entry);
 				add_virtual_pmp_entry_to_cache(virtual_target_entry);
-				for (int i = 0; i < middle->number_of_node; i += 2) {
+				for (int i = 0; i < middle->number_of_node; i ++) {
 					uint32_t start = middle->cache[i]->start;
 					uint32_t end = middle->cache[i]->end;
 					uint8_t privilege = middle->cache[i]->privilege;
 					uint8_t mask = 0x08;
 					uint8_t pmpcfg_content = privilege | mask;
-					write_pmpcfg(i, 0);
-					write_pmpcfg(i + 1, pmpcfg_content);
-					write_pmpaddr(i, start);
-					write_pmpaddr(i + 1, end);
+					write_pmpcfg(i * 2, 0);
+					write_pmpcfg(i * 2 + 1, pmpcfg_content);
+					write_pmpaddr(i * 2, start);
+					write_pmpaddr(i * 2 + 1, end);
 				}
 			}
+			/* Don't increment mepc by 4 because this instruction access needs executing again */
 		}
 	}
 }
