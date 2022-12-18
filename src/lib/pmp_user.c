@@ -336,7 +336,7 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 			node1->start = cur->end;
 			node1->end = cur->next->start;
 			node1->priority = priority;
-			node1->privilege = cur->privilege;
+			node1->privilege = privilege;
 
 			/* Insert this node into linkedlist */
 			if (organized_entry_head == NULL) organized_entry_head = node1;
@@ -662,7 +662,7 @@ void test_case3() {
 	*(ptr) = 0xaa;
 	/* read */
 	content = *(ptr);
-	printf("testcase3.1:%d, content:%x\n", content != 0xaa, content);
+	printf("testcase3.1:%d, content:%x\n", content == 0xaa, content);
 
 	ptr = (uint8_t *)(0x87E0000A);
 	/* write */
@@ -699,6 +699,69 @@ void test_case3() {
 }
 
 
+void test_case4() {
+
+	uint32_t addr1 = addr2pmpaddr(0x87E00008);
+	uint32_t addr2 = addr2pmpaddr(0x87E00014);
+	pmp_isolation_request(addr1, addr2, 0x5, 4);
+
+
+	addr1 = addr2pmpaddr(0x87E00008);
+	addr2 = addr2pmpaddr(0x87E00010);
+	pmp_isolation_request(addr1, addr2, 0x6, 2);
+
+
+	addr1 = addr2pmpaddr(0x87E00014);
+	addr2 = addr2pmpaddr(0x87E00018);
+	pmp_isolation_request(addr1, addr2, 0x7, 1);
+
+	addr1 = addr2pmpaddr(0x87E00004);
+	addr2 = addr2pmpaddr(0x87E0000C);
+	pmp_isolation_request(addr1, addr2, 0x3, 3);
+
+	uint8_t *ptr;
+	uint8_t content;
+
+	ptr = (uint8_t *)(0x87E00006);
+	/* write */
+	*(ptr) = 0xaa;
+	/* read */
+	content = *(ptr);
+	printf("testcase4.1:%d, content:%x\n", content == 0xaa, content);
+
+	ptr = (uint8_t *)(0x87E0000A);
+	/* write */
+	*(ptr) = 0xbb;
+	/* read */
+	content = *(ptr);
+	printf("testcase4.2:%d, content:%x\n", content != 0xbb, content);
+
+	ptr = (uint8_t *)(0x87E0000E);
+	/* write */
+	*(ptr) = 0xcc;
+	/* read */
+	content = *(ptr);
+	printf("testcase4.3:%d, content:%x\n", content != 0xcc, content);
+
+
+	ptr = (uint8_t *)(0x87E00012);
+	/* write */
+	*(ptr) = 0xdd;
+	/* read */
+	content = *(ptr);
+	printf("testcase4.4:%d, content:%x\n", content != 0xdd, content);
+
+	ptr = (uint8_t *)(0x87E00016);
+	/* write */
+	*(ptr) = 0xee;
+	/* read */
+	content = *(ptr);
+	printf("testcase4.5:%d, content:%x\n", content == 0xee, content);
+
+	printf("Test 4 PASSED\n");
+	jump_target();
+
+}
 void test_case5() {
 
 	uint32_t addr1 = addr2pmpaddr(0x87E00004);
@@ -1045,7 +1108,7 @@ void test_case9() {
 	content = *(ptr);
 	printf("testcase9.6:%d, content:%x\n", content == 0xff, content);
 
-	ptr = (uint8_t *)(0x87E0001A);
+	ptr = (uint8_t *)(0x87E0001E);
 	/* write */
 	*(ptr) = 0x99;
 	/* read */
@@ -1056,9 +1119,90 @@ void test_case9() {
 	jump_target();
 
 }
+void test_case10() {
+
+	uint32_t addr1 = addr2pmpaddr(0x87E00008);
+	uint32_t addr2 = addr2pmpaddr(0x87E0000C);
+	pmp_isolation_request(addr1, addr2, 0x0, 4);
+
+
+	addr1 = addr2pmpaddr(0x87E00010);
+	addr2 = addr2pmpaddr(0x87E00014);
+	pmp_isolation_request(addr1, addr2, 0x5, 3);
+
+
+	addr1 = addr2pmpaddr(0x87E00018);
+	addr2 = addr2pmpaddr(0x87E0001C);
+	pmp_isolation_request(addr1, addr2, 0x6, 1);
+
+
+	addr1 = addr2pmpaddr(0x87E00004);
+	addr2 = addr2pmpaddr(0x87E00020);
+	pmp_isolation_request(addr1, addr2, 0x7, 2);
+
+	visualize_linkedlist();
+
+
+	uint8_t *ptr;
+	uint8_t content;
+
+	ptr = (uint8_t *)(0x87E00006);
+	/* write */
+	*(ptr) = 0xaa;
+	/* read */
+	content = *(ptr);
+	printf("testcase10.1:%d, content:%x\n", content == 0xaa, content);
+
+	ptr = (uint8_t *)(0x87E0000A);
+	/* write */
+	*(ptr) = 0xbb;
+	/* read */
+	content = *(ptr);
+	printf("testcase10.2:%d, content:%x\n", content == 0xbb, content);
+
+	ptr = (uint8_t *)(0x87E0000E);
+	/* write */
+	*(ptr) = 0xcc;
+	/* read */
+	content = *(ptr);
+	printf("testcase10.3:%d, content:%x\n", content == 0xcc, content);
+
+
+	ptr = (uint8_t *)(0x87E00012);
+	/* write */
+	*(ptr) = 0xdd;
+	/* read */
+	content = *(ptr);
+	printf("testcase10.4:%d, content:%x\n", content == 0xdd, content);
+
+	ptr = (uint8_t *)(0x87E00016);
+	/* write */
+	*(ptr) = 0xee;
+	/* read */
+	content = *(ptr);
+	printf("testcase10.5:%d, content:%x\n", content == 0xee, content);
+
+	ptr = (uint8_t *)(0x87E0001A);
+	/* write */
+	*(ptr) = 0xff;
+	/* read */
+	content = *(ptr);
+	printf("testcase10.6:%d, content:%x\n", content != 0xff, content);
+
+	ptr = (uint8_t *)(0x87E0001E);
+	/* write */
+	*(ptr) = 0x99;
+	/* read */
+	content = *(ptr);
+	printf("testcase10.7:%d, content:%x\n", content == 0x99, content);
+
+	printf("Test 10 PASSED\n");
+	jump_target();
+
+}
 void pmp_test_script() {
 
-	test_case9();
+	test_case10();
 	jump_target();
 }
 
