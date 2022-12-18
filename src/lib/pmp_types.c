@@ -73,10 +73,10 @@ void adjust_middle_layer() {
 	/* Sorting algorithm is bubble sort */
 	for (int u = 0; u < i; u ++) {
 		for (int v = u + 1; v < i; v ++) {
-			if (middle->cache[i]->priority > middle->cache[j]->priority) {
-				virtual_pmp_entry * tmp = middle->cache[i];
-				middle->cache[i] = middle->cache[j];
-				middle->cache[j] =  tmp;
+			if (middle->cache[u]->priority > middle->cache[v]->priority) {
+				virtual_pmp_entry * tmp = middle->cache[u];
+				middle->cache[u] = middle->cache[v];
+				middle->cache[v] =  tmp;
 			}
 		}
 	}

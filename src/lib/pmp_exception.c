@@ -28,6 +28,18 @@ void pmp_exception_handler() {
 			write_pmpaddr(i, start);
 			write_pmpaddr(i + 1, end);
 		}
+		uint32_t mepc;
+		
+		/* Increment mepc by 4 to point to the next instruction of ebreak */
+		__asm__ __volatile__(
+			"csrr %0, mepc"
+			:"+r"(mepc)
+		);
+		mepc += 4;
+		__asm__ __volatile__(
+			"csrw mepc, %0"
+			::"r"(mepc)
+		);
 	}
 	/* If not breakpoint exception, then it is PMP related */
 	else {
@@ -38,7 +50,7 @@ void pmp_exception_handler() {
 			:"+r"(addr)
 		);
 		/* Find the entry which contains addr and has
-		 * the hightest priority in pmp entry*/
+		 * the highest priority in pmp entry*/
 		virtual_pmp_entry *target_entry = NULL;
 		for (size_t i = 0; i < middle->number_of_node; i ++) {
 			uint32_t start = middle->cache[i]->start;

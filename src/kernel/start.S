@@ -31,15 +31,7 @@ park:
 
 _save_context:
 	
-	# config mepc to _restore_context
-	csrw mscratch, t4
-	la t4, _restore_context
-	csrw mepc, t4
-	csrr t4, mscratch
-	
-	# save sp pointer
-	csrw sscratch, sp
-
+	addi sp, sp, -120
 	# save context
 
 	sw x1, 0(sp)
@@ -73,13 +65,9 @@ _save_context:
 	sw x30, 112(sp)
 	sw x31, 116(sp)
 
-	j pmp_exception_handler
+	call pmp_exception_handler
 
-_restore_context:
-
-	# restore sp pointer
-	csrr sp, sscratch
-
+	
 	lw x1, 0(sp)
 	lw x3, 4(sp)
 	lw x4, 8(sp)
@@ -112,7 +100,6 @@ _restore_context:
 	lw x31, 116(sp)
 	addi sp, sp, 120
 
-	csrw mepc, ra
 	mret
 
 stacks:
