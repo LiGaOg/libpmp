@@ -1,6 +1,5 @@
 #include "pressure_test.h"
-#include "pmp_user.h"
-#include "os.h"
+#include "pmp_system_library.h"
 
 unsigned long read_cycles(void)
 {
@@ -10,6 +9,7 @@ unsigned long read_cycles(void)
 }
 
 void muti_test(){
+    testNoOverlap(10);
 }
 
 void testNoOverlap(unsigned int request_num){
@@ -256,7 +256,7 @@ void testHighOverlap(unsigned int request_num, unsigned int block_interval){
             pmp_id_count += 1;
             avg_time_request += cycles_end - cycles_start;
         }
-        centerPoint += 100;
+        centerPoint += interval;
     }
     // request end
     avg_time_request /= pmp_id_count;

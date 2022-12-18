@@ -4,6 +4,7 @@
 #include "pmp_user.h"
 #include "pmp_exception.h"
 #include "pmp_util.h"
+#include "pressure_test.h"
 
 
 extern void _save_context();
@@ -1202,7 +1203,8 @@ void test_case10() {
 }
 void pmp_test_script() {
 
-	test_case10();
+//	test_case10();
+    muti_test();
 	jump_target();
 }
 
