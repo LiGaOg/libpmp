@@ -11,13 +11,25 @@ int is_equal(virtual_pmp_entry *v1, virtual_pmp_entry *v2) {
 /* Delete target virtual_pmp_entry in LinkedList */
 void delete_virtual_pmp_entry(virtual_pmp_entry *target) {
 	virtual_pmp_entry *cur = dummy.head;
+	int is_delete_head = 0;
 	for (int i = 0; i < dummy.number_of_node; i ++) {
 		if (is_equal(cur, target)) {
-			target->prev->next = target->next;
+			if (target->prev == NULL) {
+				is_delete_head = 1;
+				continue;
+			}
+			if (target->prev != NULL)
+				target->prev->next = target->next;
 			/* If this is not the last node */
 			if (target->next != NULL) target->next->prev = target->prev;
 			dummy.number_of_node --;
 		}
+	}
+	if (is_delete_head) {
+		if (target->next != NULL)
+			target->next->prev = NULL;
+		dummy.head = target->next;
+		dummy.number_of_node --;
 	}
 	if (dummy.number_of_node == 0) dummy.head = NULL;
 }
@@ -73,10 +85,10 @@ void adjust_middle_layer() {
 	/* Sorting algorithm is bubble sort */
 	for (int u = 0; u < i; u ++) {
 		for (int v = u + 1; v < i; v ++) {
-			if (middle->cache[i]->priority > middle->cache[j]->priority) {
-				virtual_pmp_entry * tmp = middle->cache[i];
-				middle->cache[i] = middle->cache[j];
-				middle->cache[j] =  tmp;
+			if (middle->cache[u]->priority > middle->cache[v]->priority) {
+				virtual_pmp_entry * tmp = middle->cache[u];
+				middle->cache[u] = middle->cache[v];
+				middle->cache[v] =  tmp;
 			}
 		}
 	}
@@ -94,11 +106,9 @@ void add_virtual_pmp_entry_to_cache(virtual_pmp_entry *target) {
 	}
 	else {
 		int evicted_index = evict_from_middle();
-		virtual_pmp_entry *evicted_entry =  middle->cache[evicted_index];
+		virtual_pmp_entry *evict_entry = middle->cache[evicted_index];
 		middle->cache[evicted_index] = target;
 		adjust_middle_layer();
-		/* Add evicted PMP entry back to LinkedList */
-		add_virtual_pmp_entry(evicted_entry);
 	}
 }
 
