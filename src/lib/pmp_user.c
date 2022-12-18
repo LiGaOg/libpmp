@@ -62,6 +62,7 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 				delete_virtual_pmp_entry(cur);
 			}
 		}
+		cur = cur->next;
 	}
 	/* Now pmp_entry_head stores all entries intersects with [start, end] */
 
@@ -140,7 +141,7 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 			node2->start = cur->start;
 			node2->end = cur->end;
 			node2->priority = priority;
-			node2->privilege = cur->privilege;
+			node2->privilege = privilege;
 
 			/* Insert those two nodes into new linkedlist */
 			if (organized_entry_head == NULL) organized_entry_head = node1;
@@ -173,7 +174,7 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 			node2->start = start;
 			node2->end = end;
 			node2->priority = priority;
-			node2->privilege = cur->privilege;
+			node2->privilege = privilege;
 
 			/* Node3 */
 			virtual_pmp_entry *node3 = (virtual_pmp_entry *)malloc(sizeof(virtual_pmp_entry));
@@ -237,7 +238,7 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 			node3->start = start;
 			node3->end = cur->end;
 			node3->priority = priority;
-			node3->privilege = cur->privilege;
+			node3->privilege = privilege;
 
 			/* Insert those three nodes into linkedlist */
 			if (organized_entry_head == NULL) organized_entry_head = node1;
@@ -275,7 +276,7 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 			node2->start = cur->start;
 			node2->end = end;
 			node2->priority = priority;
-			node2->privilege = cur->privilege;
+			node2->privilege = privilege;
 
 			/* Node3 */
 			virtual_pmp_entry *node3 = (virtual_pmp_entry *)malloc(sizeof(virtual_pmp_entry));
@@ -431,6 +432,8 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 		}
 	}
 	
+	/* Sort cache */
+	adjust_middle_layer();
 	/* Refresh */
 	refresh();
 
@@ -442,27 +445,6 @@ void jump_target() {
 
 void test_case1() {
 
-	/* Write specific value */
-	uint8_t *ptr = (uint8_t *)(0x87E00006);
-	
-	/* 0x87E00006, 0x11 */
-	*(ptr) = 0x11;
-
-	/* 0x87E0000A, 0x45 */
-	ptr = (uint8_t *)0x87E0000A;
-	*(ptr) = 0x45;
-
-	/* 0x87E0000E, 0x14 */
-	ptr = (uint8_t *)0x87E0000E;
-	*(ptr) = 0x14;
-
-	/* 0x87E00012, 0x19 */
-	ptr = (uint8_t *)0x87E00012;
-	*(ptr) = 0x19;
-
-	/* 0x87E00016, 0x81 */
-	ptr = (uint8_t *)0x87E00016;
-	*(ptr) = 0x81;
 
 	/* [0x87E00004, 0x87E00018), _wx, 3 */
 	uint32_t addr1 = addr2pmpaddr(0x87E00004);
@@ -481,33 +463,72 @@ void test_case1() {
 	addr2 = addr2pmpaddr(0x87E00010);
 	pmp_isolation_request(addr1, addr2, 0x1, 1);
 
+	uint8_t *ptr;
+	uint8_t content;
 
-	/* Attempt to read 0x87E00006 */
-	uint8_t *ptr1 = (uint8_t *)0x87E00006;
-	uint8_t content1 = *(ptr1);
-	printf("testcase1.1 read 0x87E00006: %x, should be: %x, ok? %d\n", content1, 0x11, content1 != 0x11);
+	ptr = (uint8_t *)(0x87E00006);
+	/* write */
+	*(ptr) = 0xaa;
+	/* read */
+	content = *(ptr);
+	printf("testcase1.1:%d, content:%x\n", content != 0xaa, content);
+
+	ptr = (uint8_t *)(0x87E0000A);
+	/* write */
+	*(ptr) = 0xbb;
+	/* read */
+	content = *(ptr);
+	printf("testcase1.2:%d, content:%x\n", content == 0xbb, content);
+
+	ptr = (uint8_t *)(0x87E0000E);
+	/* write */
+	*(ptr) = 0xcc;
+	/* read */
+	content = *(ptr);
+	printf("testcase1.3:%d, content:%x\n", content != 0xcc, content);
+
+
+	ptr = (uint8_t *)(0x87E00012);
+	/* write */
+	*(ptr) = 0xdd;
+	/* read */
+	content = *(ptr);
+	printf("testcase1.4:%d, content:%x\n", content == 0xdd, content);
+
+	ptr = (uint8_t *)(0x87E00016);
+	/* write */
+	*(ptr) = 0xee;
+	/* read */
+	content = *(ptr);
+	printf("testcase1.5:%d, content:%x\n", content != 0xee, content);
+
+	/* /1* Attempt to read 0x87E00006 *1/ */
+	/* uint8_t *ptr1 = (uint8_t *)0x87E00006; */
+	/* uint8_t content1 = *(ptr1); */
+	/* printf("testcase1.1 read 0x87E00006: %x, should be: %x, ok? %d\n", content1, 0x11, content1 != 0x11); */
 	
-	/* Attempt to read 0x87E0000A */
-	ptr1 = (uint8_t *)0x87E0000A;
-	content1 = *(ptr1);
-	printf("testcase1.2 read 0x87E0000A: %x, should be: %x, ok? %d\n", content1, 0x45, content1 == 0x45);
+	/* /1* Attempt to read 0x87E0000A *1/ */
+	/* ptr1 = (uint8_t *)0x87E0000A; */
+	/* content1 = *(ptr1); */
+	/* printf("testcase1.2 read 0x87E0000A: %x, should be: %x, ok? %d\n", content1, 0x45, content1 == 0x45); */
 
-	/* Attempt to read 0x87E0000E */
-	ptr1 = (uint8_t *)0x87E0000E;
-	content1 = *(ptr1);
-	printf("testcase1.3 read 0x87E0000E: %x, should be: %x, ok? %d\n", content1, 0x14, content1 == 0x14);
+	/* /1* Attempt to read 0x87E0000E *1/ */
+	/* ptr1 = (uint8_t *)0x87E0000E; */
+	/* content1 = *(ptr1); */
+	/* printf("testcase1.3 read 0x87E0000E: %x, should be: %x, ok? %d\n", content1, 0x14, content1 == 0x14); */
 
-	/* Attempt to read 0x87E00012 */
-	ptr1 = (uint8_t *)0x87E00012;
-	content1 = *(ptr1);
-	printf("testcase1.4 read 0x87E00012: %x, should be %x, ok? %d\n", content1, 0x19, content1 == 0x19);
+	/* /1* Attempt to read 0x87E00012 *1/ */
+	/* ptr1 = (uint8_t *)0x87E00012; */
+	/* content1 = *(ptr1); */
+	/* printf("testcase1.4 read 0x87E00012: %x, should be %x, ok? %d\n", content1, 0x19, content1 == 0x19); */
 
-	/* Attempt to read 0x87E00016 */
-	ptr1 = (uint8_t *)0x87E00016;
-	content1 = *(ptr1);
-	printf("testcase1.5 read 0x87E00016: %x, should be %x, ok? %d\n", content1, 0x81, content1 != 0x81);
+	/* /1* Attempt to read 0x87E00016 *1/ */
+	/* ptr1 = (uint8_t *)0x87E00016; */
+	/* content1 = *(ptr1); */
+	/* printf("testcase1.5 read 0x87E00016: %x, should be %x, ok? %d\n", content1, 0x81, content1 != 0x81); */
 	
 	printf("Test 1 PASSED\n");
+	jump_target();
 }
 
 void pmp_test_script() {
@@ -711,7 +732,7 @@ void pmp_virtualize_init() {
 
 	/* Config one PMP entry to enable mret */
 	uint32_t pmpaddr14 = 0x00000000;
-	uint32_t pmpaddr15 = 0xffffffff;
+	uint32_t pmpaddr15 = addr2pmpaddr(0x87E00000);
 	uint8_t pmp15cfg = 0x0f;
 
 	write_pmpaddr(14, pmpaddr14);

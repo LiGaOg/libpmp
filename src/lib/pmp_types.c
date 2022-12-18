@@ -104,6 +104,12 @@ void add_virtual_pmp_entry_to_cache(virtual_pmp_entry *target) {
 		adjust_middle_layer();
 		middle->number_of_node ++;
 	}
+	else {
+		int evicted_index = evict_from_middle();
+		virtual_pmp_entry *evict_entry = middle->cache[evicted_index];
+		middle->cache[evicted_index] = target;
+		adjust_middle_layer();
+	}
 }
 
 

@@ -50,12 +50,12 @@ void pmp_exception_handler() {
 			:"+r"(addr)
 		);
 		/* Find the entry which contains addr and has
-		 * the highest priority in pmp entry*/
+		 * the highest priority in cache */
 		virtual_pmp_entry *target_entry = NULL;
 		for (size_t i = 0; i < middle->number_of_node; i ++) {
 			uint32_t start = middle->cache[i]->start;
 			uint32_t end = middle->cache[i]->end;
-			if (addr2pmpaddr( addr ) >= start && addr2pmpaddr( addr ) <= end) {
+			if (addr2pmpaddr( addr ) >= start && addr2pmpaddr( addr ) < end) {
 				target_entry = middle->cache[i];
 				break;
 			}
@@ -83,7 +83,6 @@ void pmp_exception_handler() {
 			/* If this address is not contained by virtual pmp entry, ignore */
 			/* If contained, then refresh it into physical pmp entries */
 			if (virtual_target_entry != NULL) {
-				delete_virtual_pmp_entry(virtual_target_entry);
 				add_virtual_pmp_entry_to_cache(virtual_target_entry);
 				for (int i = 0; i < middle->number_of_node; i ++) {
 					uint32_t start = middle->cache[i]->start;
@@ -96,8 +95,26 @@ void pmp_exception_handler() {
 					write_pmpaddr(i * 2, start);
 					write_pmpaddr(i * 2 + 1, end);
 				}
+				/* Don't increment mepc by 4 because this instruction access needs executing again */
+				return ;
 			}
-			/* Don't increment mepc by 4 because this instruction access needs executing again */
+			else {
+				/* If no target entry in linkedlist, increment mepc by 4 */
+				/* Increment mepc by 4 */
+				uint32_t mepc;
+				
+				/* Increment mepc by 4 to point to the next instruction of ebreak */
+				__asm__ __volatile__(
+					"csrr %0, mepc"
+					:"+r"(mepc)
+				);
+				mepc += 4;
+				__asm__ __volatile__(
+					"csrw mepc, %0"
+					::"r"(mepc)
+				);
+				return ;
+			}
 		}
 	}
 }

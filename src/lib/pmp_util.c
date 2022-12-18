@@ -351,12 +351,12 @@ virtual_pmp_entry *find_highest_priority_entry(uint32_t addr) {
 	/* Iterate all virtual pmp entries in linkedlist */
 	virtual_pmp_entry *cur = dummy.head;
 	virtual_pmp_entry *target = NULL;
-	int highest_priority = -1;
+	int highest_priority = 114514;
 	for (size_t i = 0; i < dummy.number_of_node; i ++) {
 		uint32_t start = cur->start;
 		uint32_t end = cur->end;
 		uint8_t priority = cur->priority;
-		if (addr2pmpaddr( addr ) >= start && addr2pmpaddr( addr ) <= end) {
+		if (addr2pmpaddr( addr ) >= start && addr2pmpaddr( addr ) < end) {
 			if (highest_priority != -1 && priority < highest_priority) {
 				highest_priority = priority;
 				target = cur;
