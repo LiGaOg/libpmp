@@ -14,7 +14,8 @@ void pmp_free(int priority) {
 	
 	/* Iterate and delete virtual entries in linkedlist */
 	virtual_pmp_entry *cur = dummy.head;
-	for (size_t i = 0; i < dummy.number_of_node; i ++) {
+	int num = dummy.number_of_node;
+	for (size_t i = 0; i < num; i ++) {
 		virtual_pmp_entry *tmp = cur->next;
 		if (cur->priority == priority) {
 			delete_virtual_pmp_entry(cur);
@@ -23,11 +24,15 @@ void pmp_free(int priority) {
 	}
 
 	/* Iterate and delete virtual entries in middle layer */
+	int cnt = 0;
 	for (size_t i = 0; i < middle->number_of_node; i ++) {
 		if (middle->cache[i]->priority == priority) {
-			delete_middle_layer_entry(middle->cache[i]);
+			middle->cache[i] = NULL;
+			cnt ++;
 		}
 	}
+	middle->number_of_node -= cnt;
+	adjust_middle_layer();
 	/* refresh to physical PMP entries */
 	refresh();
 }
@@ -72,8 +77,7 @@ void pmp_isolation_request(uint32_t start, uint32_t end, uint8_t privilege, int 
 	}
 	/* Now pmp_entry_head stores all entries intersects with [start, end] */
 
-	/* If pmp_entry_head is NULL, then no intersection found */
-	if (pmp_entry_head == NULL) {
+	/* If pmp_entry_head is NULL, then no intersection found */ if (pmp_entry_head == NULL) {
 		/* Firstly, create a node */
 		virtual_pmp_entry *newEntry = (virtual_pmp_entry *)malloc(sizeof(virtual_pmp_entry));
 		newEntry->start = start;
@@ -488,6 +492,28 @@ void jump_target() {
 	while (1) {}
 }
 
+void clear_memory() {
+
+	uint8_t *ptr;
+	
+	ptr = (uint8_t *)(0x87E00006);
+	*(ptr) = 0;
+	ptr = (uint8_t *)(0x87E00008);
+	*(ptr) = 0;
+	ptr = (uint8_t *)(0x87E0000A);
+	*(ptr) = 0;
+	ptr = (uint8_t *)(0x87E0000E);
+	*(ptr) = 0;
+	ptr = (uint8_t *)(0x87E00012);
+	*(ptr) = 0;
+	ptr = (uint8_t *)(0x87E00016);
+	*(ptr) = 0;
+	ptr = (uint8_t *)(0x87E0001A);
+	*(ptr) = 0;
+	ptr = (uint8_t *)(0x87E0001E);
+	*(ptr) = 0;
+}
+
 void test_case1() {
 
 
@@ -547,33 +573,8 @@ void test_case1() {
 	content = *(ptr);
 	printf("testcase1.5:%d, content:%x\n", content != 0xee, content);
 
-	/* /1* Attempt to read 0x87E00006 *1/ */
-	/* uint8_t *ptr1 = (uint8_t *)0x87E00006; */
-	/* uint8_t content1 = *(ptr1); */
-	/* printf("testcase1.1 read 0x87E00006: %x, should be: %x, ok? %d\n", content1, 0x11, content1 != 0x11); */
-	
-	/* /1* Attempt to read 0x87E0000A *1/ */
-	/* ptr1 = (uint8_t *)0x87E0000A; */
-	/* content1 = *(ptr1); */
-	/* printf("testcase1.2 read 0x87E0000A: %x, should be: %x, ok? %d\n", content1, 0x45, content1 == 0x45); */
-
-	/* /1* Attempt to read 0x87E0000E *1/ */
-	/* ptr1 = (uint8_t *)0x87E0000E; */
-	/* content1 = *(ptr1); */
-	/* printf("testcase1.3 read 0x87E0000E: %x, should be: %x, ok? %d\n", content1, 0x14, content1 == 0x14); */
-
-	/* /1* Attempt to read 0x87E00012 *1/ */
-	/* ptr1 = (uint8_t *)0x87E00012; */
-	/* content1 = *(ptr1); */
-	/* printf("testcase1.4 read 0x87E00012: %x, should be %x, ok? %d\n", content1, 0x19, content1 == 0x19); */
-
-	/* /1* Attempt to read 0x87E00016 *1/ */
-	/* ptr1 = (uint8_t *)0x87E00016; */
-	/* content1 = *(ptr1); */
-	/* printf("testcase1.5 read 0x87E00016: %x, should be %x, ok? %d\n", content1, 0x81, content1 != 0x81); */
 	
 	printf("Test 1 PASSED\n");
-	jump_target();
 }
 
 void test_case2() {
@@ -632,7 +633,6 @@ void test_case2() {
 	printf("testcase2.5:%d, content:%x\n", content != 0xee, content);
 
 	printf("Test 2 PASSED\n");
-	jump_target();
 
 }
 
@@ -696,7 +696,6 @@ void test_case3() {
 	printf("testcase3.5:%d, content:%x\n", content == 0xee, content);
 
 	printf("Test 3 PASSED\n");
-	jump_target();
 
 }
 
@@ -761,7 +760,6 @@ void test_case4() {
 	printf("testcase4.5:%d, content:%x\n", content == 0xee, content);
 
 	printf("Test 4 PASSED\n");
-	jump_target();
 
 }
 void test_case5() {
@@ -829,7 +827,6 @@ void test_case5() {
 	printf("testcase5.5:%d, content:%x\n", content == 0xee, content);
 
 	printf("Test 5 PASSED\n");
-	jump_target();
 
 }
 
@@ -899,7 +896,6 @@ void test_case6() {
 	printf("testcase6.5:%d, content:%x\n", content == 0xee, content);
 
 	printf("Test 6 PASSED\n");
-	jump_target();
 
 }
 void test_case7() {
@@ -965,7 +961,6 @@ void test_case7() {
 	printf("testcase7.6:%d, content:%x\n", content != 0xff, content);
 
 	printf("Test 7 PASSED\n");
-	jump_target();
 
 }
 
@@ -1037,7 +1032,6 @@ void test_case8() {
 	printf("testcase8.6:%d, content:%x\n", content != 0xff, content);
 
 	printf("Test 8 PASSED\n");
-	jump_target();
 
 }
 void test_case9() {
@@ -1061,7 +1055,6 @@ void test_case9() {
 	addr2 = addr2pmpaddr(0x87E00020);
 	pmp_isolation_request(addr1, addr2, 0x7, 3);
 
-	visualize_linkedlist();
 
 
 	uint8_t *ptr;
@@ -1118,7 +1111,6 @@ void test_case9() {
 	printf("testcase9.7:%d, content:%x\n", content == 0x99, content);
 
 	printf("Test 9 PASSED\n");
-	jump_target();
 
 }
 void test_case10() {
@@ -1142,7 +1134,6 @@ void test_case10() {
 	addr2 = addr2pmpaddr(0x87E00020);
 	pmp_isolation_request(addr1, addr2, 0x7, 2);
 
-	visualize_linkedlist();
 
 
 	uint8_t *ptr;
@@ -1199,158 +1190,91 @@ void test_case10() {
 	printf("testcase10.7:%d, content:%x\n", content == 0x99, content);
 
 	printf("Test 10 PASSED\n");
-	jump_target();
 
 }
 void pmp_test_script() {
 
-//	test_case10();
-    muti_test();
+	/* test_case1(); */
+	/* pmp_free(3); */
+	/* pmp_free(2); */
+	/* pmp_free(1); */
+	/* visualize_linkedlist(); */
+	/* visualize_middle_layer(); */
+
+	/* test_case2(); */
+	/* pmp_free(1); */
+	/* pmp_free(2); */
+	/* pmp_free(3); */
+	/* visualize_linkedlist(); */
+	/* visualize_middle_layer(); */
+	
+	/* test_case3(); */
+	/* pmp_free(1); */
+	/* pmp_free(2); */
+	/* pmp_free(3); */
+	/* pmp_free(4); */
+	/* visualize_linkedlist(); */
+	/* visualize_middle_layer(); */
+
+	/* test_case4(); */
+	/* pmp_free(1); */
+	/* pmp_free(2); */
+	/* pmp_free(3); */
+	/* pmp_free(4); */
+	/* visualize_linkedlist(); */
+	/* visualize_middle_layer(); */
+
+	/* test_case5(); */
+	/* pmp_free(1); */
+	/* pmp_free(2); */
+	/* pmp_free(3); */
+	/* pmp_free(4); */
+	/* pmp_free(5); */
+	/* visualize_linkedlist(); */
+	/* visualize_middle_layer(); */
+
+	/* test_case6(); */
+	/* pmp_free(1); */
+	/* pmp_free(2); */
+	/* pmp_free(3); */
+	/* pmp_free(4); */
+	/* pmp_free(5); */
+	/* visualize_linkedlist(); */
+	/* visualize_middle_layer(); */
+
+	/* test_case7(); */
+	/* pmp_free(1); */
+	/* pmp_free(2); */
+	/* pmp_free(3); */
+	/* visualize_linkedlist(); */
+	/* visualize_middle_layer(); */
+
+	/* test_case8(); */
+	/* pmp_free(1); */
+	/* pmp_free(2); */
+	/* pmp_free(3); */
+	/* visualize_linkedlist(); */
+	/* visualize_middle_layer(); */
+
+	/* test_case9(); */
+	/* pmp_free(1); */
+	/* pmp_free(2); */
+	/* pmp_free(3); */
+	/* pmp_free(4); */
+	/* visualize_linkedlist(); */
+	/* visualize_middle_layer(); */
+
+	test_case10();
+	pmp_free(1);
+	pmp_free(2);
+	pmp_free(3);
+	pmp_free(4);
+	visualize_linkedlist();
+	visualize_middle_layer();
+
 	jump_target();
 }
 
-/* void pmp_test_script() { */
-
-/* 	/1* Tested region is [0x87E00000, 0x87F00000] *1/ */
-
-/* 	/1* Create 17 isolated regions which don't have read permission *1/ */
-	
-/* 	/1* Prioirty of those regions are increaseing *1/ */
-	
-/* 	/1* Those regions are intersected *1/ */
-
-/* 	/1* [0x87E00000, 0x87E00010] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E00000 ), addr2pmpaddr( 0x87E00010 ), 0x0e, 0); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E00004, 0x87E00020] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E00004 ), addr2pmpaddr( 0x87E00020 ), 0x0e, 1); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E00014, 0x87E00030] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E00014 ), addr2pmpaddr( 0x87E00030 ), 0x0e, 2); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E00024, 0x87E00040] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E00024 ), addr2pmpaddr( 0x87E00040 ), 0x0e, 3); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E00034, 0x87E00050] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E00034 ), addr2pmpaddr( 0x87E00050 ), 0x0e, 4); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E00044, 0x87E00060] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E00044 ), addr2pmpaddr( 0x87E00060 ), 0x0e, 5); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E00054, 0x87E00070] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E00054 ), addr2pmpaddr( 0x87E00070 ), 0x0e, 6); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E00064, 0x87E00080] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E00064 ), addr2pmpaddr( 0x87E00080 ), 0x0e, 7); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E00074, 0x87E00090] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E00074 ), addr2pmpaddr( 0x87E00090 ), 0x0e, 8); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E00084, 0x87E000a0] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E00084 ), addr2pmpaddr( 0x87E000a0 ), 0x0e, 9); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E00094, 0x87E000b0] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E00094 ), addr2pmpaddr( 0x87E000b0 ), 0x0e, 10); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E000a4, 0x87E000c0] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E000a4 ), addr2pmpaddr( 0x87E000c0 ), 0x0e, 11); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E000b4, 0x87E000d0] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E000b4 ), addr2pmpaddr( 0x87E000d0 ), 0x0e, 12); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E000c4, 0x87E000e0] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E000c4 ), addr2pmpaddr( 0x87E000e0 ), 0x0e, 13); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E000d4, 0x87E000f0] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E000d4 ), addr2pmpaddr( 0x87E000f0 ), 0x0e, 14); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E000e4, 0x87E00100] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E000e4 ), addr2pmpaddr( 0x87E00100 ), 0x0e, 15); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-/* 	/1* [0x87E000f4, 0x87E00110] *1/ */
-/* 	pmp_isolation_request(addr2pmpaddr( 0x87E000f4 ), addr2pmpaddr( 0x87E00110 ), 0x0e, 16); */
-/* 	visualize_linkedlist(); */
-/* 	printf("======================="); */
-/* 	visualize_middle_layer(); */
-/* 	printf("-----------------------"); */
-/* 	printf("\n"); */
-
-/* 	/1* Free entries *1/ */
-/* 	for (int i = 16; i >= 0; i --) { */
-/* 		pmp_free(i); */
-/* 		visualize_linkedlist(); */
-/* 		printf("======================="); */
-/* 		visualize_middle_layer(); */
-/* 		printf("-----------------------"); */
-/* 		printf("\n"); */
-/* 	} */
-
-/* 	while (1) {  } */
-/* } */
 
 /* Config csrs to support pmp virtualization */
 void pmp_virtualize_init() {

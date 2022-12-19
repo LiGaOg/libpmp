@@ -22,6 +22,13 @@ void pmp_exception_handler() {
 	);
 
 	if (mcause == 0x3) {
+		/* Clear all pmp entry */
+		for (int i = 0; i < 7; i ++) {
+			write_pmpcfg(i * 2, 0);
+			write_pmpcfg(i * 2 + 1, 0);
+			write_pmpaddr(i * 2, 0);
+			write_pmpaddr(i * 2 + 1, 0);
+		}
 		for (int i = 0; i < middle->number_of_node; i ++) {
 			uint32_t start = middle->cache[i]->start;
 			uint32_t end = middle->cache[i]->end;
@@ -72,6 +79,13 @@ void pmp_exception_handler() {
 			virtual_pmp_entry *virtual_target_entry = find_highest_priority_entry(addr);
 			if (virtual_target_entry != NULL && virtual_target_entry->priority < target_entry->priority) {
 				add_virtual_pmp_entry_to_cache(virtual_target_entry);
+				/* Clear all pmp entry */
+				for (int i = 0; i < 7; i ++) {
+					write_pmpcfg(i * 2, 0);
+					write_pmpcfg(i * 2 + 1, 0);
+					write_pmpaddr(i * 2, 0);
+					write_pmpaddr(i * 2 + 1, 0);
+				}
 				for (int i = 0; i < middle->number_of_node; i ++) {
 					uint32_t start = middle->cache[i]->start;
 					uint32_t end = middle->cache[i]->end;

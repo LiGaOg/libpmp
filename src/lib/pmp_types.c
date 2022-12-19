@@ -21,18 +21,17 @@ void delete_virtual_pmp_entry(virtual_pmp_entry *target) {
 		cur = cur->next;
 	}
 
-	if (cur->prev != NULL)
-		cur->prev->next = cur->next;
-	/* If this is not the last node */
-	if (cur->next != NULL) 
-		cur->next->prev = cur->prev;
-
-	dummy.number_of_node --;
 	if (is_delete_head) {
-		if (cur->next != NULL)
-			cur->next->prev = NULL;
+		if (cur->next != NULL) cur->next->prev = NULL;
+		dummy.number_of_node --;
 		dummy.head = cur->next;
 	}
+	else {
+		if (cur->next != NULL) cur->next->prev = cur->prev;
+		if (cur->prev != NULL) cur->prev->next = cur->next;
+		dummy.number_of_node --;
+	}
+
 	if (dummy.number_of_node == 0) dummy.head = NULL;
 }
 
