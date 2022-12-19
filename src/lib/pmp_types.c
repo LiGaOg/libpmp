@@ -14,22 +14,24 @@ void delete_virtual_pmp_entry(virtual_pmp_entry *target) {
 	int is_delete_head = 0;
 	for (int i = 0; i < dummy.number_of_node; i ++) {
 		if (is_equal(cur, target)) {
-			if (target->prev == NULL) {
+			if (cur->prev == NULL) 
 				is_delete_head = 1;
-				continue;
-			}
-			if (target->prev != NULL)
-				target->prev->next = target->next;
-			/* If this is not the last node */
-			if (target->next != NULL) target->next->prev = target->prev;
-			dummy.number_of_node --;
+			break;
 		}
+		cur = cur->next;
 	}
+
+	if (cur->prev != NULL)
+		cur->prev->next = cur->next;
+	/* If this is not the last node */
+	if (cur->next != NULL) 
+		cur->next->prev = cur->prev;
+
+	dummy.number_of_node --;
 	if (is_delete_head) {
-		if (target->next != NULL)
-			target->next->prev = NULL;
-		dummy.head = target->next;
-		dummy.number_of_node --;
+		if (cur->next != NULL)
+			cur->next->prev = NULL;
+		dummy.head = cur->next;
 	}
 	if (dummy.number_of_node == 0) dummy.head = NULL;
 }
@@ -115,12 +117,14 @@ void add_virtual_pmp_entry_to_cache(virtual_pmp_entry *target) {
 
 /* This function is used to delete virtual pmp entry in middle layer */
 void delete_middle_layer_entry(virtual_pmp_entry *target) {
+	int cnt = 0;
 	for (int i = 0; i < middle->number_of_node; i ++) {
 		if (is_equal(middle->cache[i], target)) {
 			middle->cache[i] = NULL;
-			middle->number_of_node --;
+			cnt ++;
 		}
 	}
+	middle->number_of_node -= cnt;
 	adjust_middle_layer();
 }
 
