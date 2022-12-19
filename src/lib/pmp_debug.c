@@ -5,6 +5,9 @@
 
 void visualize_linkedlist() {
 	virtual_pmp_entry *cur = dummy.head;
+	if (dummy.number_of_node == 0 && dummy.head == NULL) {
+		printf("linkedlist empty\n");
+	}
 	for (int i = 0; i < dummy.number_of_node; i ++) {
 		printf("start:%x\n", cur->start << 2);
 		printf("end:%x\n", cur->end << 2);
@@ -18,6 +21,9 @@ void visualize_linkedlist() {
 	}
 }
 void visualize_middle_layer() {
+	if (middle->number_of_node == 0) {
+		printf("cache empty\n");
+	}
 	for (int i = 0; i < middle->number_of_node; i ++) {
 		if (middle->cache[i] == NULL) printf("cache[%d]:NULL\n", i);
 		else {
