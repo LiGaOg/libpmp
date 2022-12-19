@@ -9,7 +9,36 @@ unsigned int read_cycles(void)
 }
 
 void muti_test(){
-    testNoOverlap(10);
+    int upbound = 1000;
+    int step = 4;
+    // no overlap
+    printf("--> Begin no overlap test\n");
+    for(int n = 4 ; n < upbound; n = n * step){
+        printf("----> Request %d no-overlapping memory\n", n);
+        testNoOverlap(n);
+    }
+
+    // sequential overlap
+    printf("--> Begin sequential overlap test\n");
+    for(int n = 4 ; n < upbound; n = n * step){
+        printf("----> Request %d sequential-overlapping memory\n", n);
+        testSequentialOverlap(n,NULL,2);
+    }
+
+    // centric overlap
+    printf("--> Begin centric overlap test\n");
+    for(int n = 4 ; n < upbound; n = n * step){
+        printf("----> Request %d centric-overlapping memory\n", n);
+        testCentricOverlap(n,0x10,0x8);
+    }
+
+    // high overlap
+    printf("--> Begin centric overlap test\n");
+    for(int n = 4 ; n < upbound; n = n * step){
+        printf("----> Request %d high-overlapping memory", n);
+        testHighOverlap(n,0x4);
+    }
+
 }
 
 void testNoOverlap(unsigned int request_num){
@@ -262,9 +291,9 @@ void testHighOverlap(unsigned int request_num, unsigned int block_interval){
     avg_time_request /= pmp_id_count;
     
     // To simpify, just use the center
-    for(int i = 1; i <= request_num; i++){
+    for(int i = 0; i < request_num; i++){
         unsigned int cycles_start = read_cycles();
-        asm volatile ("lb t0, 0(%0)" :: "r" (start_bound + 100 * i));
+        asm volatile ("lb t0, 0(%0)" :: "r" (start_bound + 100 + interval * i));
         unsigned int cycles_end = read_cycles();
         avg_time_access += cycles_end - cycles_start;
         if(getNset_exception_count() == 1){
