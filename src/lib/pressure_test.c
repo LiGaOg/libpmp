@@ -1,9 +1,9 @@
 #include "pressure_test.h"
 #include "pmp_system_library.h"
 
-unsigned long read_cycles(void)
+unsigned int read_cycles(void)
 {
-    unsigned long cycles;
+    unsigned int cycles;
     asm volatile ("rdcycle %0" : "=r" (cycles));
     return cycles;
 }
@@ -22,16 +22,16 @@ void testNoOverlap(unsigned int request_num){
     unsigned int end = start;
     unsigned int interval = (end_bound - start_bound) / request_num;
 
-    unsigned long avg_time_request = 0;
-    unsigned long avg_time_access = 0;
-    unsigned long avg_time_exception = 0;
-    unsigned long avg_time_free = 0;
+    unsigned int avg_time_request = 0;
+    unsigned int avg_time_access = 0;
+    unsigned int avg_time_exception = 0;
+    unsigned int avg_time_free = 0;
     int local_exception_count = 0;
     
     for(int i = 0; i < request_num; i++){
-        unsigned long cycles_start = read_cycles();
+        unsigned int cycles_start = read_cycles();
         pmp_isolation_request(addr2pmpaddr( start ), addr2pmpaddr( start + interval ), 0x0e, i); 
-        unsigned long cycles_end = read_cycles();
+        unsigned int cycles_end = read_cycles();
         avg_time_request += cycles_end - cycles_start;
         start += interval;
         end = start;
@@ -40,9 +40,9 @@ void testNoOverlap(unsigned int request_num){
     start = start_bound;
     
     for(int i = 0; i < request_num; i++){
-        unsigned long cycles_start = read_cycles();
+        unsigned int cycles_start = read_cycles();
         asm volatile ("lb t0, 0(%0)" :: "r" (start));
-        unsigned long cycles_end = read_cycles();
+        unsigned int cycles_end = read_cycles();
         avg_time_access += cycles_end - cycles_start;
         if(getNset_exception_count() == 1){
             local_exception_count += 1;
@@ -55,9 +55,9 @@ void testNoOverlap(unsigned int request_num){
     start = start_bound;
 
     for(int i = 0; i < request_num; i++){
-        unsigned long cycles_start = read_cycles();
+        unsigned int cycles_start = read_cycles();
         pmp_free(i);
-        unsigned long cycles_end = read_cycles();
+        unsigned int cycles_end = read_cycles();
         avg_time_free += cycles_end - cycles_start;
     }
     avg_time_free /= request_num;
@@ -87,16 +87,16 @@ void testSequentialOverlap(unsigned int request_num, unsigned int space_len, int
     }
     unsigned int interval = (int)( space_len / (4 * overlap_ratio)) * 4;
 
-    unsigned long avg_time_request = 0; 
-    unsigned long avg_time_access = 0;
-    unsigned long avg_time_exception = 0;
-    unsigned long avg_time_free = 0;
+    unsigned int avg_time_request = 0;
+    unsigned int avg_time_access = 0;
+    unsigned int avg_time_exception = 0;
+    unsigned int avg_time_free = 0;
     int local_exception_count = 0;
 
     for(int i = 0; i < request_num; i++){
-        unsigned long cycles_start = read_cycles();
+        unsigned int cycles_start = read_cycles();
         pmp_isolation_request(addr2pmpaddr( start ), addr2pmpaddr( start + space_len ), privilege[i%8], i);
-        unsigned long cycles_end = read_cycles();
+        unsigned int cycles_end = read_cycles();
         avg_time_request += cycles_end - cycles_start;
         start += interval;
         end = start;
@@ -105,9 +105,9 @@ void testSequentialOverlap(unsigned int request_num, unsigned int space_len, int
     start = start_bound;
 
     for(int i = 0; i < request_num; i++){
-        unsigned long cycles_start = read_cycles();
+        unsigned int cycles_start = read_cycles();
         asm volatile ("lb t0, 0(%0)" :: "r" (start));
-        unsigned long cycles_end = read_cycles();
+        unsigned int cycles_end = read_cycles();
         avg_time_access += cycles_end - cycles_start;
         if(getNset_exception_count() == 1){
             local_exception_count += 1;
@@ -120,9 +120,9 @@ void testSequentialOverlap(unsigned int request_num, unsigned int space_len, int
     start = start_bound;
 
     for(int i = 0; i < request_num; i++){
-        unsigned long cycles_start = read_cycles();
+        unsigned int cycles_start = read_cycles();
         pmp_free(i);
-        unsigned long cycles_end = read_cycles();
+        unsigned int cycles_end = read_cycles();
         avg_time_free += cycles_end - cycles_start;
     }
     avg_time_free /= request_num;
@@ -147,16 +147,16 @@ void testCentricOverlap(unsigned int request_num, unsigned int init_space_len, u
     unsigned int space_len = init_space_len;
     int privilege[8] = {0,1,2,4,3,5,6,7};
 
-    unsigned long avg_time_request = 0;
-    unsigned long avg_time_access = 0;
-    unsigned long avg_time_exception = 0;
-    unsigned long avg_time_free = 0;
+    unsigned int avg_time_request = 0;
+    unsigned int avg_time_access = 0;
+    unsigned int avg_time_exception = 0;
+    unsigned int avg_time_free = 0;
     int local_exception_count = 0;
 
     for(int i = 0; i < request_num; i++){
-        unsigned long cycles_start = read_cycles();
+        unsigned int cycles_start = read_cycles();
         pmp_isolation_request(addr2pmpaddr( start ), addr2pmpaddr( start + space_len ), privilege[i%8], i);
-        unsigned long cycles_end = read_cycles();
+        unsigned int cycles_end = read_cycles();
         avg_time_request += cycles_end - cycles_start;
         start -= extend_radius;
         space_len += 2 * extend_radius;
@@ -166,9 +166,9 @@ void testCentricOverlap(unsigned int request_num, unsigned int init_space_len, u
     space_len = init_space_len;
 
     for(int i = 0; i < request_num; i++){
-        unsigned long cycles_start = read_cycles();
+        unsigned int cycles_start = read_cycles();
         asm volatile ("lb t0, 0(%0)" :: "r" (start));
-        unsigned long cycles_end = read_cycles();
+        unsigned int cycles_end = read_cycles();
         avg_time_access += cycles_end - cycles_start;
         if(getNset_exception_count() == 1){
             local_exception_count += 1;
@@ -181,9 +181,9 @@ void testCentricOverlap(unsigned int request_num, unsigned int init_space_len, u
     start = pivot - init_space_len / 2;
 
     for(int i = 0; i < request_num; i++){
-        unsigned long cycles_start = read_cycles();
+        unsigned int cycles_start = read_cycles();
         pmp_free(i);
-        unsigned long cycles_end = read_cycles();
+        unsigned int cycles_end = read_cycles();
         avg_time_free += cycles_end - cycles_start;
     }
     avg_time_free /= request_num;
@@ -204,10 +204,10 @@ void testHighOverlap(unsigned int request_num, unsigned int block_interval){
     unsigned int end_bound = 0x87F00000;
     unsigned int centerPoint = start_bound + 100;
 
-    unsigned long avg_time_request = 0;
-    unsigned long avg_time_access = 0;
-    unsigned long avg_time_exception = 0;
-    unsigned long avg_time_free = 0;
+    unsigned int avg_time_request = 0;
+    unsigned int avg_time_access = 0;
+    unsigned int avg_time_exception = 0;
+    unsigned int avg_time_free = 0;
     int local_exception_count = 0;
 
     unsigned int pmp_id_count = 0;
@@ -223,9 +223,9 @@ void testHighOverlap(unsigned int request_num, unsigned int block_interval){
             if(leftbound < start_bound)leftbound = start_bound;
             if(rightbound > end_bound)rightbound = end_bound;
             unsigned int seed = ((((pmp_id_count * 214013U + 2531011U) & 0xffffffff) >> 16) & 0x7fff) % 8;
-            unsigned long cycles_start = read_cycles();
+            unsigned int cycles_start = read_cycles();
             pmp_isolation_request(addr2pmpaddr( leftbound ), addr2pmpaddr( rightbound ), privilege[seed], pmp_id_count);
-            unsigned long cycles_end = read_cycles();
+            unsigned int cycles_end = read_cycles();
             pmp_id_count += 1;
             avg_time_request += cycles_end - cycles_start;
         }
@@ -236,9 +236,9 @@ void testHighOverlap(unsigned int request_num, unsigned int block_interval){
             if(leftbound < start_bound)leftbound = start_bound;
             if(rightbound > end_bound)rightbound = end_bound;
             unsigned int seed = ((((pmp_id_count * 214013U + 2531011U) & 0xffffffff) >> 16) & 0x7fff) % 8;
-            unsigned long cycles_start = read_cycles();
+            unsigned int cycles_start = read_cycles();
             pmp_isolation_request(addr2pmpaddr( leftbound ), addr2pmpaddr( rightbound ), privilege[seed], pmp_id_count);
-            unsigned long cycles_end = read_cycles();
+            unsigned int cycles_end = read_cycles();
             pmp_id_count += 1;
             avg_time_request += cycles_end - cycles_start;
         }
@@ -250,9 +250,9 @@ void testHighOverlap(unsigned int request_num, unsigned int block_interval){
             if(leftbound < start_bound)leftbound = start_bound;
             if(rightbound > end_bound)rightbound = end_bound;
             unsigned int seed = ((((pmp_id_count * 214013U + 2531011U) & 0xffffffff) >> 16) & 0x7fff) % 8;
-            unsigned long cycles_start = read_cycles();
+            unsigned int cycles_start = read_cycles();
             pmp_isolation_request(addr2pmpaddr( leftbound ), addr2pmpaddr( rightbound ), privilege[seed], pmp_id_count);
-            unsigned long cycles_end = read_cycles();
+            unsigned int cycles_end = read_cycles();
             pmp_id_count += 1;
             avg_time_request += cycles_end - cycles_start;
         }
@@ -263,9 +263,9 @@ void testHighOverlap(unsigned int request_num, unsigned int block_interval){
     
     // To simpify, just use the center
     for(int i = 1; i <= request_num; i++){
-        unsigned long cycles_start = read_cycles();
+        unsigned int cycles_start = read_cycles();
         asm volatile ("lb t0, 0(%0)" :: "r" (start_bound + 100 * i));
-        unsigned long cycles_end = read_cycles();
+        unsigned int cycles_end = read_cycles();
         avg_time_access += cycles_end - cycles_start;
         if(getNset_exception_count() == 1){
             local_exception_count += 1;
@@ -277,9 +277,9 @@ void testHighOverlap(unsigned int request_num, unsigned int block_interval){
 
 
     for(int i = 0; i < pmp_id_count; i++){
-        unsigned long cycles_start = read_cycles();
+        unsigned int cycles_start = read_cycles();
         pmp_free(i);
-        unsigned long cycles_end = read_cycles();
+        unsigned int cycles_end = read_cycles();
         avg_time_free += cycles_end - cycles_start;
     }
     avg_time_free /= pmp_id_count;
