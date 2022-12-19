@@ -3,6 +3,4 @@
 
 extern void pmp_exception_handler();
 
-extern unsigned long getNset_exception_count();
-
 #endif
