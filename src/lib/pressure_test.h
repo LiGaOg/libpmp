@@ -13,4 +13,4 @@ extern void testCentricOverlap(unsigned int request_num, unsigned int init_space
 
 extern void testHighOverlap(unsigned int request_num, unsigned int block_interval);
 
-extern unsigned long read_cycles(void);
+extern unsigned int read_cycles(void);
