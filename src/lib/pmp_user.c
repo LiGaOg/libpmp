@@ -15,11 +15,10 @@ void pmp_free(int priority) {
 	/* Iterate and delete virtual entries in linkedlist */
 	virtual_pmp_entry *cur = dummy.head;
 	for (size_t i = 0; i < dummy.number_of_node; i ++) {
-		virtual_pmp_entry *tmp = cur->next;
 		if (cur->priority == priority) {
 			delete_virtual_pmp_entry(cur);
 		}
-		cur = tmp;
+		cur = cur->next;
 	}
 
 	/* Iterate and delete virtual entries in middle layer */
