@@ -63,10 +63,10 @@ void testNoOverlap(unsigned int request_num){
     avg_time_free /= request_num;
 
     // print the result
-    printf("average request time = %lu\n", avg_time_request);
-    printf("average access time = %lu\n", avg_time_access);
-    printf("average exception time = %lu\n", avg_time_exception);
-    printf("average free time = %lu\n", avg_time_free);
+    printf("average request time = %u\n", avg_time_request);
+    printf("average access time = %u\n", avg_time_access);
+    printf("average exception time = %u\n", avg_time_exception);
+    printf("average free time = %u\n", avg_time_free);
 }
 
 void testSequentialOverlap(unsigned int request_num, unsigned int space_len, int overlap_ratio){
@@ -128,10 +128,10 @@ void testSequentialOverlap(unsigned int request_num, unsigned int space_len, int
     avg_time_free /= request_num;
 
     // print the result
-    printf("average request time = %lu\n", avg_time_request);
-    printf("average access time = %lu\n", avg_time_access);
-    printf("average exception time = %lu\n", avg_time_exception);
-    printf("average free time = %lu\n", avg_time_free);
+    printf("average request time = %u\n", avg_time_request);
+    printf("average access time = %u\n", avg_time_access);
+    printf("average exception time = %u\n", avg_time_exception);
+    printf("average free time = %u\n", avg_time_free);
 }
 
 void testCentricOverlap(unsigned int request_num, unsigned int init_space_len, unsigned int extend_radius){
@@ -189,10 +189,10 @@ void testCentricOverlap(unsigned int request_num, unsigned int init_space_len, u
     avg_time_free /= request_num;
 
     // print the result
-    printf("average request time = %lu\n", avg_time_request);
-    printf("average access time = %lu\n", avg_time_access);
-    printf("average exception time = %lu\n", avg_time_exception);
-    printf("average free time = %lu\n", avg_time_free);
+    printf("average request time = %u\n", avg_time_request);
+    printf("average access time = %u\n", avg_time_access);
+    printf("average exception time = %u\n", avg_time_exception);
+    printf("average free time = %u\n", avg_time_free);
 }
 
 void testHighOverlap(unsigned int request_num, unsigned int block_interval){
@@ -285,8 +285,8 @@ void testHighOverlap(unsigned int request_num, unsigned int block_interval){
     avg_time_free /= pmp_id_count;
 
     // print the result
-    printf("average request time = %lu\n", avg_time_request);
-    printf("average access time = %lu\n", avg_time_access);
-    printf("average exception time = %lu\n", avg_time_exception);
-    printf("average free time = %lu\n", avg_time_free);
+    printf("average request time = %u\n", avg_time_request);
+    printf("average access time = %u\n", avg_time_access);
+    printf("average exception time = %u\n", avg_time_exception);
+    printf("average free time = %u\n", avg_time_free);
 }
