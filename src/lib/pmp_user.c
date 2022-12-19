@@ -4,6 +4,7 @@
 #include "pmp_user.h"
 #include "pmp_exception.h"
 #include "pmp_util.h"
+#include "pressure_test.h"
 
 
 extern void _save_context();
@@ -1271,7 +1272,7 @@ void pmp_test_script() {
 	pmp_free(4);
 	visualize_linkedlist();
 	visualize_middle_layer();
-
+  
 	jump_target();
 }
 
